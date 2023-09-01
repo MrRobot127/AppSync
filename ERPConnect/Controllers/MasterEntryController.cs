@@ -2,6 +2,7 @@
 using ERPConnect.Web.Models.Entity_Tables;
 using ERPConnect.Web.Models.Repository;
 using Microsoft.AspNetCore.Mvc;
+using ERPConnect.Web.Models;
 
 namespace ERPConnect.Web.Controllers
 {
@@ -15,7 +16,7 @@ namespace ERPConnect.Web.Controllers
 
         [HttpPost]
         public IActionResult AddNewCompanyGroup(CompanyGroup companyGroup)
-        {            
+        {
             if (ModelState.IsValid)
             {
                 CompanyGroup tblGroupOfCompany = new CompanyGroup
@@ -33,11 +34,11 @@ namespace ERPConnect.Web.Controllers
         [HttpPost]
         public IActionResult AddCompany(Company company)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 Company tblCompany = new Company
                 {
-                    
+
                 };
             }
 

@@ -19,12 +19,7 @@ namespace ERPConnect.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                CompanyGroup tblGroupOfCompany = new CompanyGroup
-                {
-                    GroupName = companyGroup.GroupName
-                };
-
-                _unitOfWork.MasterEntry.AddCompanyGroup(companyGroup);
+                var result = _unitOfWork.MasterEntry.AddCompanyGroup(companyGroup);
 
                 return RedirectToAction("details", new { id = companyGroup.Id });
             }
@@ -36,10 +31,8 @@ namespace ERPConnect.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                Company tblCompany = new Company
-                {
-
-                };
+                _unitOfWork.MasterEntry.AddCompany(company);
+                return RedirectToAction("details", new { id = company.Id });
             }
 
             return View();

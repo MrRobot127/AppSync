@@ -1,15 +1,9 @@
-﻿
-using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using log4net;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ERPConnect.Logger
+namespace ERPConnect.Web.Models
 {
-    public sealed class Logger : ILogger
+    public sealed class Logger : ERPConnect.Web.Interfaces.ILogger
     {
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly Lazy<Logger> _loggerInstance = new Lazy<Logger>(() => new Logger());
@@ -18,6 +12,12 @@ namespace ERPConnect.Logger
         private const string InnerExceptionName = "Inner Exception";
         private const string ExceptionMessageWithoutInnerException = "{0}{1}: {2}Message: {3}{4}StackTrace: {5}.";
         private const string ExceptionMessageWithInnerException = "{0}{1}{2}";
+
+        //Gets the Logger instance.
+        public static Logger Instance
+        {
+            get { return _loggerInstance.Value; }
+        }
 
         //Logs a message object with the log4net.Core.Level.Debug level.
         public void Debug(object message)

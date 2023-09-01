@@ -22,8 +22,6 @@ namespace ERPConnect.Web.Extensions
 
             services.AddScoped<IMenuServiceRepository, MenuServiceRepository>();
             services.AddScoped<IMasterEntryRepository, MasterEntryRepository>();
-
-
         }
     }
 }

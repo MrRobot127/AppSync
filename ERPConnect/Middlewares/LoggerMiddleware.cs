@@ -19,9 +19,8 @@ namespace ERPConnect.Web.Middlewares
             }
             catch (Exception ex)
             {
-                // Log the exception using your Logger.Instance
+                // Log the exception using Logger.Instance
                 Logger.Instance.Error("An Exception occurred:", ex);
-
                 throw;
             }
         }

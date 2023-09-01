@@ -39,7 +39,6 @@ namespace ERPConnect.Web.Controllers
                 Company tblCompany = new Company
                 {
 
-
                 };
             }
 

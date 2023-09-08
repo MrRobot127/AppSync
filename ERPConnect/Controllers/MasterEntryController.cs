@@ -14,12 +14,20 @@ namespace ERPConnect.Web.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [HttpGet]
+        public IActionResult AddNewCompanyGroup()
+        {
+            var companyGroup = _unitOfWork.MasterEntry.GetCompanyGroup();
+
+            return View(companyGroup);
+        }
+
         [HttpPost]
         public IActionResult AddNewCompanyGroup(CompanyGroup companyGroup)
         {
             if (ModelState.IsValid)
             {
-                var result = _unitOfWork.MasterEntry.AddCompanyGroup(companyGroup);
+                _unitOfWork.MasterEntry.AddCompanyGroup(companyGroup);
 
                 return RedirectToAction("details", new { id = companyGroup.Id });
             }

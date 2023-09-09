@@ -113,8 +113,8 @@ namespace ERPConnect.Web.Models.Context
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
             {
                 Id = ROLE_ID,
-                Name = "admin",
-                NormalizedName = "admin".ToUpper()
+                Name = "Admin",
+                NormalizedName = "Admin".ToUpper()
             });
 
             var hasher = new PasswordHasher<ApplicationUser>();

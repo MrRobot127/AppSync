@@ -2,6 +2,7 @@
 using ERPConnect.Web.Models.Context;
 using ERPConnect.Web.Models.Entity_Tables;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ERPConnect.Web.Models.Repository
 {
@@ -27,6 +28,13 @@ namespace ERPConnect.Web.Models.Repository
             _dbContext.SaveChanges();
 
             return addedGroup;
+        }
+
+        public List<CompanyGroup> GetCompanyGroup()
+        {
+            var lstcompanyGroup = _dbContext.CompanyGroups.ToList();
+
+            return lstcompanyGroup;
         }
     }
 }

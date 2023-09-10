@@ -42,6 +42,9 @@ namespace ERPConnect.Web.Models.Repository
                     existingGroup.GroupName = updatedCompanyGroup.GroupName;
                     existingGroup.IsActive = updatedCompanyGroup.IsActive;
 
+                    existingGroup.ModifiedBy = 1; //will change once User Functionality added
+                    existingGroup.ModifiedOn = DateTime.Now;
+
                     await _dbContext.SaveChangesAsync();
                     return existingGroup;
                 }
@@ -74,6 +77,9 @@ namespace ERPConnect.Web.Models.Repository
         {
             try
             {
+                newCompanyGrup.CreatedBy = 1; //will change once User Functionality added
+                newCompanyGrup.CreatedOn = DateTime.Now;
+
                 _dbContext.CompanyGroups.Add(newCompanyGrup);
                 await _dbContext.SaveChangesAsync();
 

@@ -23,6 +23,14 @@ namespace ERPConnect.Web.Controllers
             return View(companyGroup);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Company()
+        {
+            var company = await _unitOfWork.MasterEntry.GetCompany();
+
+            return View(company);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateCompanyGroup(CompanyGroup updatedCompanyGroup)
         {

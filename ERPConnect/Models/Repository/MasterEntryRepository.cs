@@ -16,6 +16,34 @@ namespace ERPConnect.Web.Models.Repository
             _dbContext = dbContext;
         }
 
+        public async Task<List<CompanyGroup>> GetCompanyGroup()
+        {
+            try
+            {
+                var lstcompanyGroup = await _dbContext.CompanyGroups.Where(group => group.IsActive == true).ToListAsync();
+
+                return lstcompanyGroup;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<Company>> GetCompany()
+        {
+            try
+            {
+                var lstCompany = await _dbContext.Companies.ToListAsync();
+
+                return lstCompany;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public Company AddCompany(Company company)
         {
             try
@@ -57,21 +85,7 @@ namespace ERPConnect.Web.Models.Repository
             {
                 throw;
             }
-        }
-
-        public async Task<List<CompanyGroup>> GetCompanyGroup()
-        {
-            try
-            {
-                var lstcompanyGroup = await _dbContext.CompanyGroups.Where(group => group.IsActive == true).ToListAsync();
-
-                return lstcompanyGroup;
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        }       
 
         public async Task<CompanyGroup> AddCompanyGroup(CompanyGroup newCompanyGrup)
         {
@@ -90,5 +104,6 @@ namespace ERPConnect.Web.Models.Repository
                 throw;
             }
         }
+
     }
 }

@@ -25,7 +25,7 @@
 </style>
 
 <script>
-    $(document).ready(function () {       
+    $(document).ready(function () {
 
         const $companyGroupTable = $('#company-group-table');
         const $newGroupNameInput = $('#new-group-name');
@@ -150,12 +150,17 @@
                                             <img src="/images/save-icon.png" title="Save" style="height: 17px; width: 18px; border: none;" />
                                         </button>
                                         <button class="cancel-button" data-id="${newGroup.Id}" style="display:none;">
-                                            <img src="/images/cancel-icon.png" title="Cancel" style="height: 25px; width: 26px; border: none;" />
+                                            <img src="/images/cancel-icon.jpg" title="Cancel" style="height: 25px; width: 26px; border: none;" />
                                         </button>
                                     </td>
                                 </tr>
                             `;
-                    $('#company-group-table tbody').append(newRow);
+
+                    $('#company-group-table tbody').append(newRow);                
+
+                    // Add the new row to the DataTable
+                    $('#company-group-table').DataTable().row.add($(newRow)).draw();
+
                 } else {
                     alert('Operation failed');
                 }
@@ -166,7 +171,7 @@
         });
     }
 
-    function updateCompanyGroup(rowReference, status) {
+    function updateCompanyGroup($row, status) {
         let isActive;
         if (status === 'edit') {
             isActive = true;
@@ -174,13 +179,13 @@
             isActive = false;
         }
 
-        const $editButton = rowReference.find('.edit-button');
-        const $saveButton = rowReference.find('.save-button');
-        const $cancelButton = rowReference.find('.cancel-button');
-        const $deleteButton = rowReference.find('.delete-button');
+        const $editButton = $row.find('.edit-button');
+        const $saveButton = $row.find('.save-button');
+        const $cancelButton = $row.find('.cancel-button');
+        const $deleteButton = $row.find('.delete-button');
 
-        const $groupName = rowReference.find('.group-name');
-        const $groupId = rowReference.find('.group-id');
+        const $groupName = $row.find('.group-name');
+        const $groupId = $row.find('.group-id');
 
         const postData = {
             Id: parseInt($groupId.text()),
@@ -195,10 +200,15 @@
             success: function (response) {
                 if (response.success) {
                     if (status === 'delete') {
-                        rowReference.remove();
+                        $row.remove();
+                        // Remove from DataTable as well
+                        $('#company-group-table').DataTable().row($row).remove().draw(false);
                     } else {
-                        rowReference.find('.save-button, .cancel-button').hide();
-                        rowReference.find('.edit-button, .delete-button').show();
+                        // Update the name in DataTable
+                        $('#company-group-table').DataTable().cell($row, 1).data(postData.GroupName).draw();
+
+                        $row.find('.save-button, .cancel-button').hide();
+                        $row.find('.edit-button, .delete-button').show();
                         $groupName.text(postData.GroupName);
                         $groupName.removeClass('editable-highlight');
                     }
@@ -247,7 +257,7 @@
                                             <img src="~/images/save-icon.png" title="Save" style="height: 17px; width: 18px; border: none;" />
                                         </button>
                                         <button class="cancel-button" data-id="@group.Id" style="display:none;">
-                                            <img src="~/images/cancel-icon.png" title="Cancel" style="height: 25px; width: 26px; border: none;" />
+                                            <img src="~/images/cancel-icon.jpg" title="Cancel" style="height: 25px; width: 26px; border: none;" />
                                         </button>
                                     </td>
                                 </tr>

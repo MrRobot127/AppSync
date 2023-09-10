@@ -25,6 +25,39 @@ namespace ERPConnect.Web.Models.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<MenuItem>(entity =>
+            {
+                entity.ToTable("MenuItem");
+
+                entity.Property(e => e.MenuItemId).HasColumnName("MenuItemID");
+
+                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.Name).HasMaxLength(255);
+
+                entity.Property(e => e.ParentMenuItemId).HasColumnName("ParentMenuItemID");
+
+                entity.Property(e => e.Url).HasMaxLength(255);
+
+                entity.HasOne(d => d.ParentMenuItem)
+                    .WithMany(p => p.InverseParentMenuItem)
+                    .HasForeignKey(d => d.ParentMenuItemId)
+                    .HasConstraintName("FK_MenuItems_ParentMenuItemID");
+            });
+
+            modelBuilder.Entity<CompanyGroup>(entity =>
+            {
+                entity.ToTable("CompanyGroup");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.GroupName).HasMaxLength(255);
+
+                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+            });
+
             modelBuilder.Entity<Company>(entity =>
             {
                 entity.ToTable("Company");
@@ -32,6 +65,8 @@ namespace ERPConnect.Web.Models.Context
                 entity.Property(e => e.Address1).HasMaxLength(255);
 
                 entity.Property(e => e.Address2).HasMaxLength(255);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
 
                 entity.Property(e => e.Email).HasMaxLength(255);
 
@@ -70,35 +105,8 @@ namespace ERPConnect.Web.Models.Context
                 entity.Property(e => e.RegNo).HasMaxLength(255);
 
                 entity.Property(e => e.RegistrationDate).HasMaxLength(255);
-            });
 
-            modelBuilder.Entity<CompanyGroup>(entity =>
-            {
-                entity.ToTable("CompanyGroup");
-
-                entity.Property(e => e.GroupName).HasMaxLength(255);
-
-                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
-            });
-
-            modelBuilder.Entity<MenuItem>(entity =>
-            {
-                entity.ToTable("MenuItem");
-
-                entity.Property(e => e.MenuItemId).HasColumnName("MenuItemID");
-
-                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.Name).HasMaxLength(255);
-
-                entity.Property(e => e.ParentMenuItemId).HasColumnName("ParentMenuItemID");
-
-                entity.Property(e => e.Url).HasMaxLength(255);
-
-                entity.HasOne(d => d.ParentMenuItem)
-                    .WithMany(p => p.InverseParentMenuItem)
-                    .HasForeignKey(d => d.ParentMenuItemId)
-                    .HasConstraintName("FK_MenuItems_ParentMenuItemID");
+                entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
             });
 
             SeedInitialData(modelBuilder);

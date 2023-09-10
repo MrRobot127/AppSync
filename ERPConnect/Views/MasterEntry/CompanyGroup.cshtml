@@ -1,0 +1,278 @@
+﻿@model List<CompanyGroup>;
+
+<style>
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse !important;
+        border: 1px solid #ccc;
+    }
+
+    .editable-highlight {
+        background-color: #f3f3f3;
+    }
+
+    .custom-table button {
+        border: none;
+        background: transparent;
+    }
+
+    .custom-table th, .custom-table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+
+</style>
+
+<script>
+    $(document).ready(function () {       
+
+        const $companyGroupTable = $('#company-group-table');
+        const $newGroupNameInput = $('#new-group-name');
+
+        // Set the "original-value" data attribute for existing rows
+        $('.group-name').each(function () {
+            $(this).data('original-value', $(this).text().trim());
+        });
+
+        const dataTable = $companyGroupTable.DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "columnDefs": [
+                { "orderable": false, "targets": [2] }
+            ]
+        });
+
+        // Function to handle Edit button click
+        $companyGroupTable.on('click', '.edit-button', function () {
+            const $row = $(this).closest('tr');
+            const $groupName = $row.find('.group-name');
+            $groupName.attr('contenteditable', 'true').addClass('editable-highlight');
+            $(this).hide();
+            $row.find('.delete-button').hide();
+            $row.find('.save-button, .cancel-button').show();
+        });
+
+        // Function to handle Cancel button click
+        $companyGroupTable.on('click', '.cancel-button', function () {
+            const $row = $(this).closest('tr');
+            const $groupName = $row.find('.group-name');
+            $groupName.text($groupName.data('original-value')); // Revert to original value
+            $groupName.attr('contenteditable', 'false').removeClass('editable-highlight');
+            $row.find('.edit-button, .delete-button').show();
+            $row.find('.save-button, .cancel-button').hide();
+        });
+
+        // Function to handle Delete button click
+        $companyGroupTable.on('click', '.delete-button', function () {
+            if (confirm("Are you sure you want to delete?")) {
+                const $row = $(this).closest('tr');
+                updateCompanyGroup($row, 'delete');
+            }
+        });
+
+        // Function to handle Save button click
+        $companyGroupTable.on('click', '.save-button', function () {
+
+            const $row = $(this).closest('tr');
+            const $groupName = $row.find('.group-name');
+            const originalGroupName = $groupName.data('original-value');
+
+            if ($groupName.text().trim() === '') {
+                alert('Please enter a value for GroupName.');
+                return;
+            } else if ($groupName.text().trim() === originalGroupName) {
+                // No change, do nothing
+                $row.find('.edit-button, .delete-button').show();
+                $row.find('.save-button, .cancel-button').hide();
+                $groupName.removeClass('editable-highlight');
+                return;
+            } else {
+                updateCompanyGroup($row, 'edit');
+            }
+        });
+
+        // Function to handle Add button click
+        $('.add-new-button').click(function () {
+            const newGroupName = $newGroupNameInput.val().trim();
+
+            if (newGroupName === '') {
+                alert('Please enter a value for GroupName.');
+                return;
+            }
+
+            let isDuplicate = false;
+
+            $companyGroupTable.find('tbody tr .group-name').each(function () {
+                const existingGroupName = $(this).text().trim();
+                if (existingGroupName === newGroupName) {
+                    isDuplicate = true;
+                    return false;
+                }
+            });
+
+            if (isDuplicate) {
+                alert('Duplicate entry. Please enter a unique GroupName.');
+                return;
+            }
+
+            addCompanyGroup(newGroupName);
+            $newGroupNameInput.val('');
+        });
+    });
+
+    function addCompanyGroup(newGroupName) {
+        const data = {
+            GroupName: newGroupName,
+            IsActive: true
+        };
+        $.ajax({
+            url: '/MasterEntry/AddCompanyGroup',
+            type: 'POST',
+            data: data,
+            success: function (response) {
+                if (response.success) {
+                    const newGroup = JSON.parse(response.data);
+                    const newRow = `
+                                <tr class="company-group-row">
+                                    <td class="group-id">${newGroup.Id}</td>
+                                    <td class="group-name" data-original-value="${newGroup.GroupName}" data-group-id="${newGroup.Id}">${newGroup.GroupName}</td>
+                                    <td>
+                                        <button class="edit-button" data-id="${newGroup.Id}">
+                                            <img src="/images/edit-icon.png" title="Edit" style="height: 17px; width: 18px; border: none;" />
+                                        </button>
+                                        <button class="delete-button" data-id="${newGroup.Id}">
+                                            <img src="/images/delete-icon.png" title="Delete" style="height: 17px; width: 18px; border: none;" />
+                                        </button>
+                                        <button class="save-button" data-id="${newGroup.Id}" style="display:none;">
+                                            <img src="/images/save-icon.png" title="Save" style="height: 17px; width: 18px; border: none;" />
+                                        </button>
+                                        <button class="cancel-button" data-id="${newGroup.Id}" style="display:none;">
+                                            <img src="/images/cancel-icon.png" title="Cancel" style="height: 25px; width: 26px; border: none;" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                    $('#company-group-table tbody').append(newRow);
+                } else {
+                    alert('Operation failed');
+                }
+            },
+            error: function (error) {
+                alert('An error occurred while adding the company group.');
+            }
+        });
+    }
+
+    function updateCompanyGroup(rowReference, status) {
+        let isActive;
+        if (status === 'edit') {
+            isActive = true;
+        } else if (status === 'delete') {
+            isActive = false;
+        }
+
+        const $editButton = rowReference.find('.edit-button');
+        const $saveButton = rowReference.find('.save-button');
+        const $cancelButton = rowReference.find('.cancel-button');
+        const $deleteButton = rowReference.find('.delete-button');
+
+        const $groupName = rowReference.find('.group-name');
+        const $groupId = rowReference.find('.group-id');
+
+        const postData = {
+            Id: parseInt($groupId.text()),
+            GroupName: $groupName.text().trim(),
+            IsActive: isActive
+        };
+
+        $.ajax({
+            url: '/MasterEntry/UpdateCompanyGroup',
+            type: 'POST',
+            data: postData,
+            success: function (response) {
+                if (response.success) {
+                    if (status === 'delete') {
+                        rowReference.remove();
+                    } else {
+                        rowReference.find('.save-button, .cancel-button').hide();
+                        rowReference.find('.edit-button, .delete-button').show();
+                        $groupName.text(postData.GroupName);
+                        $groupName.removeClass('editable-highlight');
+                    }
+                } else {
+                    alert('Operation failed: ' + response.msg);
+                }
+            },
+            error: function (error) {
+                alert('An error occurred during request.');
+            }
+        });
+    }
+
+</script>
+
+<div class="container">
+    <div class="row" style="margin: 10px; padding: 10px;">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" style="text-align:center;">
+                    Company Group
+                </div>
+                <div class="card-body">
+                    <table id="company-group-table" class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>GroupName</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var group in Model)
+                            {
+                                <tr class="company-group-row">
+                                    <td class="group-id">@group.Id</td>
+                                    <td class="group-name" data-group-id="@group.Id">@group.GroupName</td>
+                                    <td>
+                                        <button class="edit-button" data-id="@group.Id">
+                                            <img src="~/images/edit-icon.png" title="Edit" style="height: 17px; width: 18px; border: none;" />
+                                        </button>
+                                        <button class="delete-button" data-id="@group.Id">
+                                            <img src="~/images/delete-icon.png" title="Delete" style="height: 17px; width: 18px; border: none;" />
+                                        </button>
+                                        <button class="save-button" data-id="@group.Id" style="display:none;">
+                                            <img src="~/images/save-icon.png" title="Save" style="height: 17px; width: 18px; border: none;" />
+                                        </button>
+                                        <button class="cancel-button" data-id="@group.Id" style="display:none;">
+                                            <img src="~/images/cancel-icon.png" title="Cancel" style="height: 25px; width: 26px; border: none;" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr class="company-group-row">
+                                <td></td>
+                                <td>
+                                    <input type="text" class="form-control" id="new-group-name" placeholder="New Group Name" />
+                                </td>
+                                <td>
+                                    <button class="add-new-button">
+                                        <img src="~/images/add-icon.png" title="Add New" style="height: 17px; width: 18px; border: none;" />
+                                    </button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

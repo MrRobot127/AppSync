@@ -1,4 +1,7 @@
-﻿namespace ERPConnect.Web.Models.Entity_Tables
+﻿using System;
+using System.Collections.Generic;
+
+namespace ERPConnect.Web.ScaffoldingOnly
 {
     public partial class Company
     {

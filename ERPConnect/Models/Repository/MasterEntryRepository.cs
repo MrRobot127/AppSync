@@ -1,7 +1,9 @@
 ﻿using ERPConnect.Web.Interfaces;
 using ERPConnect.Web.Models.Context;
 using ERPConnect.Web.Models.Entity_Tables;
+using ERPConnect.Web.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ERPConnect.Web.Models.Repository
@@ -16,25 +18,71 @@ namespace ERPConnect.Web.Models.Repository
 
         public Company AddCompany(Company company)
         {
-            var addedCompany = _dbContext.Companies.Add(company).Entity;
-            _dbContext.SaveChanges();
+            try
+            {
+                var addedCompany = _dbContext.Companies.Add(company).Entity;
+                _dbContext.SaveChanges();
 
-            return addedCompany;
+                return addedCompany;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public CompanyGroup AddCompanyGroup(CompanyGroup companyGroup)
+        public async Task<CompanyGroup> UpdateCompanyGroup(CompanyGroup updatedCompanyGroup)
         {
-            var addedGroup = _dbContext.CompanyGroups.Add(companyGroup).Entity;
-            _dbContext.SaveChanges();
+            try
+            {
+                var existingGroup = await _dbContext.CompanyGroups.FindAsync(updatedCompanyGroup.Id);
 
-            return addedGroup;
+                if (existingGroup != null)
+                {
+                    existingGroup.GroupName = updatedCompanyGroup.GroupName;
+                    existingGroup.IsActive = updatedCompanyGroup.IsActive;
+
+                    await _dbContext.SaveChangesAsync();
+                    return existingGroup;
+                }
+                else
+                {
+                    throw new Exception("Group doesn't exist.");
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public List<CompanyGroup> GetCompanyGroup()
+        public async Task<List<CompanyGroup>> GetCompanyGroup()
         {
-            var lstcompanyGroup = _dbContext.CompanyGroups.ToList();
+            try
+            {
+                var lstcompanyGroup = await _dbContext.CompanyGroups.Where(group => group.IsActive == true).ToListAsync();
 
-            return lstcompanyGroup;
+                return lstcompanyGroup;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<CompanyGroup> AddCompanyGroup(CompanyGroup newCompanyGrup)
+        {
+            try
+            {
+                _dbContext.CompanyGroups.Add(newCompanyGrup);
+                await _dbContext.SaveChangesAsync();
+
+                return newCompanyGrup;
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

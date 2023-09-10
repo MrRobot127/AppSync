@@ -3,6 +3,7 @@ using ERPConnect.Web.Models.Entity_Tables;
 using ERPConnect.Web.Models.Repository;
 using Microsoft.AspNetCore.Mvc;
 using ERPConnect.Web.Models;
+using Newtonsoft.Json;
 
 namespace ERPConnect.Web.Controllers
 {
@@ -15,35 +16,57 @@ namespace ERPConnect.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddNewCompanyGroup()
+        public async Task<IActionResult> CompanyGroup()
         {
-            var companyGroup = _unitOfWork.MasterEntry.GetCompanyGroup();
+            var companyGroup = await _unitOfWork.MasterEntry.GetCompanyGroup();
 
             return View(companyGroup);
         }
 
         [HttpPost]
-        public IActionResult AddNewCompanyGroup(CompanyGroup companyGroup)
+        public async Task<IActionResult> UpdateCompanyGroup(CompanyGroup updatedCompanyGroup)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.MasterEntry.AddCompanyGroup(companyGroup);
+                try
+                {
+                    var updatedData = await _unitOfWork.MasterEntry.UpdateCompanyGroup(updatedCompanyGroup);
+                    var updatedDataArray = JsonConvert.SerializeObject(updatedData);
 
-                return RedirectToAction("details", new { id = companyGroup.Id });
+                    return Json(new { success = true, data = updatedDataArray });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false,msg = ex.Message });
+                }
             }
-            return View();
+
+            // If ModelState is not valid, return validation errors as JSON
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                      .Select(e => e.ErrorMessage)
+                                      .ToList();
+            return Json(new { success = false, errors });
         }
 
         [HttpPost]
-        public IActionResult AddCompany(Company company)
+        public async Task<IActionResult> AddCompanyGroup(CompanyGroup newCompanyGrup)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.MasterEntry.AddCompany(company);
-                return RedirectToAction("details", new { id = company.Id });
+                try
+                {
+                    var newCompanyGroup = await _unitOfWork.MasterEntry.AddCompanyGroup(newCompanyGrup);
+                    return Json(new { success = true, data = JsonConvert.SerializeObject(newCompanyGroup) });
+                }
+                catch (Exception ex)
+                {
+
+                    return Json(new { success = false, error = ex.Message });
+                }
             }
 
-            return View();
+            var errors = ModelState.SelectMany(x => x.Value.Errors.Select(e => e.ErrorMessage));
+            return Json(new { success = false, errors });
 
         }
     }

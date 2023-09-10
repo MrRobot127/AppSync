@@ -4,10 +4,9 @@ namespace ERPConnect.Web.Interfaces
 {
     public interface IMasterEntryRepository
     {
-        public List<CompanyGroup> GetCompanyGroup();
-        CompanyGroup AddCompanyGroup(CompanyGroup companyGroup);
-
-        Company AddCompany(Company company);
+        Task<List<CompanyGroup>> GetCompanyGroup();
+        Task<CompanyGroup> UpdateCompanyGroup(CompanyGroup updatedCompanyGroup);
+        Task<CompanyGroup> AddCompanyGroup(CompanyGroup company);
 
         //SubCompany AddSubCompany(SubCompany company);
 

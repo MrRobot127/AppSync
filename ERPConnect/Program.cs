@@ -25,8 +25,6 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-app.UseLoggerMiddleware();
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAuthentication();

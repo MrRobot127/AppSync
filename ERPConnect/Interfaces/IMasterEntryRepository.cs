@@ -8,6 +8,9 @@ namespace ERPConnect.Web.Interfaces
         Task<List<Company>> GetCompany();
         Task<CompanyGroup> UpdateCompanyGroup(CompanyGroup updatedCompanyGroup);
         Task<CompanyGroup> AddCompanyGroup(CompanyGroup newcompanyGroup);
-        
+        Task<CompanyGroup> GetCompanyGroupById(int id);
+
+        Task DeleteCompanyGroup(int id);
+
     }
 }

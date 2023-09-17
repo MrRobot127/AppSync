@@ -20,7 +20,7 @@ namespace ERPConnect.Web.Models.Repository
         {
             try
             {
-                var lstcompanyGroup = await _dbContext.CompanyGroups.Where(group => group.IsActive == true).ToListAsync();
+                var lstcompanyGroup = await _dbContext.CompanyGroups.ToListAsync();
 
                 return lstcompanyGroup;
             }
@@ -68,7 +68,6 @@ namespace ERPConnect.Web.Models.Repository
                 if (existingGroup != null)
                 {
                     existingGroup.GroupName = updatedCompanyGroup.GroupName;
-                    existingGroup.IsActive = updatedCompanyGroup.IsActive;
 
                     existingGroup.ModifiedBy = 1; //will change once User Functionality added
                     existingGroup.ModifiedOn = DateTime.Now;
@@ -100,6 +99,37 @@ namespace ERPConnect.Web.Models.Repository
                 return newCompanyGrup;
             }
             catch
+            {
+                throw;
+            }
+        }
+
+        public async Task DeleteCompanyGroup(int id)
+        {
+            try
+            {
+                var companyGroup = await _dbContext.CompanyGroups.FindAsync(id);
+
+                if (companyGroup != null)
+                {
+                    _dbContext.CompanyGroups.Remove(companyGroup);
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<CompanyGroup> GetCompanyGroupById(int id)
+        {
+            try
+            {
+                var companyGroup = await _dbContext.CompanyGroups.FirstOrDefaultAsync(c => c.Id == id);
+                return companyGroup;
+            }
+            catch (Exception ex)
             {
                 throw;
             }

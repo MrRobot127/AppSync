@@ -10,6 +10,7 @@ namespace ERPConnect.Web.Controllers
     public class MasterEntryController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
+
         public MasterEntryController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -45,7 +46,7 @@ namespace ERPConnect.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false,msg = ex.Message });
+                    return Json(new { success = false, msg = ex.Message });
                 }
             }
 
@@ -61,21 +62,28 @@ namespace ERPConnect.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    var newCompanyGroup = await _unitOfWork.MasterEntry.AddCompanyGroup(newCompanyGrup);
-                    return Json(new { success = true, data = JsonConvert.SerializeObject(newCompanyGroup) });
-                }
-                catch (Exception ex)
-                {
+                var newCompanyGroup = await _unitOfWork.MasterEntry.AddCompanyGroup(newCompanyGrup);
+                return Json(new { success = true, data = JsonConvert.SerializeObject(newCompanyGroup) });
 
-                    return Json(new { success = false, error = ex.Message });
-                }
             }
-
             var errors = ModelState.SelectMany(x => x.Value.Errors.Select(e => e.ErrorMessage));
             return Json(new { success = false, errors });
 
+        }
+
+        [HttpDelete("companygroups/{id}")]
+        public async Task<IActionResult> DeleteCompanyGroup(int id)
+        {
+            var companyGroup = await _unitOfWork.MasterEntry.GetCompanyGroupById(id);
+
+            if (companyGroup == null)
+            {
+                return NotFound(new { success = false, msg = "CompanyGroup not found!" });
+            }
+
+            await _unitOfWork.MasterEntry.DeleteCompanyGroup(id);
+
+            return Ok(new { success = true, msg = "CompanyGroup deleted successfully" });
         }
     }
 }

@@ -31,8 +31,6 @@ namespace ERPConnect.Web.Models.Context
 
                 entity.Property(e => e.MenuItemId).HasColumnName("MenuItemID");
 
-                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
-
                 entity.Property(e => e.Name).HasMaxLength(255);
 
                 entity.Property(e => e.ParentMenuItemId).HasColumnName("ParentMenuItemID");
@@ -52,8 +50,6 @@ namespace ERPConnect.Web.Models.Context
                 entity.Property(e => e.CreatedOn).HasColumnType("datetime");
 
                 entity.Property(e => e.GroupName).HasMaxLength(255);
-
-                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
             });

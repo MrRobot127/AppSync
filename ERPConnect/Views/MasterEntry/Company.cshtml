@@ -85,6 +85,9 @@
                         // Show the edit modal
                         $("#editModal").modal("show");
 
+                        $('.datepicker').datepicker({
+                            dateFormat: 'yy-mm-dd'
+                        });
 
                     } else {
                         alert('Operation failed: ' + response.msg);
@@ -94,50 +97,43 @@
                     alert('An error occurred during request.');
                 }
             });
-        });
-
-        function generateDynamicForm(columns, rows) {
-            const fieldNames = [
-                "Id", "Name", "Address1", "Address2", "KeyPerson", "InvolvingIndustry", "PhoneNo", "FaxNo",
-                "Email", "PFNo", "ESINo", "HeadOffice", "PanNo", "RegNo", "KeyPersonAddress", "KeyPersonPhNo",
-                "KeyPersonDOB", "KeyDesignation", "RegistrationDate"
-            ];
-
-            let dynamicFormFields = '';
-
-            for (let row = 0; row < rows; row++) {
-                dynamicFormFields += '<div class="row mb-3">';
-                for (let col = 0; col < columns; col++) {
-                    const fieldName = fieldNames[row * columns + col];
-                    if (!fieldName) break;
-
-                    // Add a class to the label for "RegistrationDate" and "KeyPersonDOB"
-                    const labelClass = fieldName === 'RegistrationDate' || fieldName === 'KeyPersonDOB' ? 'datepicker-label' : '';
-
-                    dynamicFormFields += `
-                        <div class="col-md-${12 / columns}">
-                            <div class="form-group">
-                                <label for="editCompany${fieldName}" class="bold-label ${labelClass}">${fieldName}</label>
-                                <input type="text" id="editCompany${fieldName}" class="form-control" style="cursor:auto;">
-                            </div>
-                        </div>
-                    `;
-                }
-                dynamicFormFields += '</div>';
-            }
-
-            $('#dynamicFormFields').html(dynamicFormFields);
-        }
+        });        
 
         generateDynamicForm(4, 10);
-
-        $('.datepicker-label').on('click', function () {
-            const inputId = 'editCompany' + $(this).text();
-            $('#' + inputId).datepicker();
-        });
-
-
+       
     });
+
+    function generateDynamicForm(columns, rows) {
+        const fieldNames = [
+            "Id", "Name", "Address1", "Address2", "KeyPerson", "InvolvingIndustry", "PhoneNo", "FaxNo",
+            "Email", "PFNo", "ESINo", "HeadOffice", "PanNo", "RegNo", "KeyPersonAddress", "KeyPersonPhNo",
+            "KeyPersonDOB", "KeyDesignation", "RegistrationDate"
+        ];
+
+        let dynamicFormFields = '';
+
+        for (let row = 0; row < rows; row++) {
+            dynamicFormFields += '<div class="row mb-3">';
+            for (let col = 0; col < columns; col++) {
+                const fieldName = fieldNames[row * columns + col];
+                if (!fieldName) break;
+
+                const datepicker = fieldName === 'RegistrationDate' || fieldName === 'KeyPersonDOB' ? 'datepicker' : '';
+
+                dynamicFormFields += `
+                                        <div class="col-md-${12 / columns}">
+                                            <div class="form-group">
+                                                <label for="editCompany${fieldName}" class="bold-label">${fieldName}</label>
+                                                        <input type="text" id="editCompany${fieldName}" class="form-control ${datepicker}" style="cursor:auto;">
+                                            </div>
+                                        </div>
+                                    `;
+            }
+            dynamicFormFields += '</div>';
+        }
+
+        $('#dynamicFormFields').html(dynamicFormFields);
+    }
 
 
 </script>

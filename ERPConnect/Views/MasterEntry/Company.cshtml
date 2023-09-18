@@ -27,7 +27,6 @@
         font-weight: bold;
     }
 
-
 </style>
 <script>
 
@@ -54,17 +53,38 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
-                    if (response.success) {     
-                        debugger;
+                    if (response.success) {
+
                         var companyData = response.data;
-                       
-                        $("#editCompanyName").val(companyData.name);
-                        $("#editCompanyAddress").val(companyData.address);
-                        // Add more fields as needed
+
+                        const fieldNames = [
+                            "Id", "Name", "Address1", "Address2", "KeyPerson", "InvolvingIndustry", "PhoneNo", "FaxNo",
+                            "Email", "PFNo", "ESINo", "HeadOffice", "PanNo", "RegNo", "KeyPersonAddress", "KeyPersonPhNo",
+                            "KeyPersonDOB", "KeyDesignation", "RegistrationDate"
+                        ];
+
+
+                        for (var key in companyData) {
+                            if (companyData.hasOwnProperty(key)) {
+                                var value = companyData[key];
+                                var inputId = null;
+
+                                for (var i = 0; i < fieldNames.length; i++) {
+                                    var fieldName = fieldNames[i];
+                                    if (fieldName.toLowerCase() === key.toLowerCase()) {
+                                        inputId = "editCompany" + fieldName;
+                                        break;
+                                    }
+                                }
+                                if (inputId) {
+                                    $("#" + inputId).val(value);
+                                }
+                            }
+                        }
 
                         // Show the edit modal
                         $("#editModal").modal("show");
-                        
+
 
                     } else {
                         alert('Operation failed: ' + response.msg);
@@ -76,12 +96,11 @@
             });
         });
 
-        function generateDynamicForm(columns, rows) {         
+        function generateDynamicForm(columns, rows) {
             const fieldNames = [
                 "Id", "Name", "Address1", "Address2", "KeyPerson", "InvolvingIndustry", "PhoneNo", "FaxNo",
                 "Email", "PFNo", "ESINo", "HeadOffice", "PanNo", "RegNo", "KeyPersonAddress", "KeyPersonPhNo",
                 "KeyPersonDOB", "KeyDesignation", "RegistrationDate"
-                
             ];
 
             let dynamicFormFields = '';
@@ -91,14 +110,18 @@
                 for (let col = 0; col < columns; col++) {
                     const fieldName = fieldNames[row * columns + col];
                     if (!fieldName) break;
+
+                    // Add a class to the label for "RegistrationDate" and "KeyPersonDOB"
+                    const labelClass = fieldName === 'RegistrationDate' || fieldName === 'KeyPersonDOB' ? 'datepicker-label' : '';
+
                     dynamicFormFields += `
-                            <div class="col-md-${12 / columns}">
-                                <div class="form-group">
-                                    <label for="editCompany${fieldName}" class="bold-label">${fieldName}</label>
-                                    <input type="text" id="editCompany${fieldName}" class="form-control">
-                                </div>
+                        <div class="col-md-${12 / columns}">
+                            <div class="form-group">
+                                <label for="editCompany${fieldName}" class="bold-label ${labelClass}">${fieldName}</label>
+                                <input type="text" id="editCompany${fieldName}" class="form-control" style="cursor:auto;">
                             </div>
-                        `;
+                        </div>
+                    `;
                 }
                 dynamicFormFields += '</div>';
             }
@@ -107,9 +130,15 @@
         }
 
         generateDynamicForm(4, 10);
-       
+
+        $('.datepicker-label').on('click', function () {
+            const inputId = 'editCompany' + $(this).text();
+            $('#' + inputId).datepicker();
+        });
+
 
     });
+
 
 </script>
 
@@ -175,7 +204,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    
+
                     <!-- Dynamic form fields will be inserted here -->
                     <div id="dynamicFormFields" class="row"></div>
                 </div>

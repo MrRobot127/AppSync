@@ -22,7 +22,7 @@ namespace ERPConnect.Web.Controllers
             var companyGroup = await _unitOfWork.MasterEntry.GetCompanyGroup();
 
             return View(companyGroup);
-        }
+        }       
 
         [HttpGet]
         public async Task<IActionResult> Company()
@@ -30,6 +30,16 @@ namespace ERPConnect.Web.Controllers
             var company = await _unitOfWork.MasterEntry.GetCompany();
 
             return View(company);
+        }
+
+        [HttpGet("GetCompanyById/{id}")]
+        public async Task<IActionResult> GetCompanyById(int id)
+        {
+            var company = await _unitOfWork.MasterEntry.GetCompanyById(id);
+
+            var jsonResult = new JsonResult(new { success = true, data = company });
+
+            return jsonResult;
         }
 
         [HttpPost]

@@ -1,3 +1,193 @@
-﻿
+﻿@model List<Company>;
 
-Company
+
+<style>
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse !important;
+        border: 1px solid #ccc;
+    }
+
+    .editable-highlight {
+        background-color: #f3f3f3;
+    }
+
+    .custom-table button {
+        border: none;
+        background: transparent;
+    }
+
+    .custom-table th, .custom-table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .bold-label {
+        font-weight: bold;
+    }
+
+
+</style>
+<script>
+
+    $(document).ready(function () {
+        const $companyGroupTable = $('#company-table');
+
+        $companyGroupTable.DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "columnDefs": [
+                { "orderable": false, "targets": [2] }
+            ]
+        });
+
+        // Function to populate the edit modal with data
+        $(".edit-button").click(function () {
+            var companyId = $(this).data("id");
+
+            var url = '/GetCompanyById/' + companyId;
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {     
+                        debugger;
+                        var companyData = response.data;
+                       
+                        $("#editCompanyName").val(companyData.name);
+                        $("#editCompanyAddress").val(companyData.address);
+                        // Add more fields as needed
+
+                        // Show the edit modal
+                        $("#editModal").modal("show");
+                        
+
+                    } else {
+                        alert('Operation failed: ' + response.msg);
+                    }
+                },
+                error: function (error) {
+                    alert('An error occurred during request.');
+                }
+            });
+        });
+
+        function generateDynamicForm(columns, rows) {         
+            const fieldNames = [
+                "Id", "Name", "Address1", "Address2", "KeyPerson", "InvolvingIndustry", "PhoneNo", "FaxNo",
+                "Email", "PFNo", "ESINo", "HeadOffice", "PanNo", "RegNo", "KeyPersonAddress", "KeyPersonPhNo",
+                "KeyPersonDOB", "KeyDesignation", "RegistrationDate"
+                
+            ];
+
+            let dynamicFormFields = '';
+
+            for (let row = 0; row < rows; row++) {
+                dynamicFormFields += '<div class="row mb-3">';
+                for (let col = 0; col < columns; col++) {
+                    const fieldName = fieldNames[row * columns + col];
+                    if (!fieldName) break;
+                    dynamicFormFields += `
+                            <div class="col-md-${12 / columns}">
+                                <div class="form-group">
+                                    <label for="editCompany${fieldName}" class="bold-label">${fieldName}</label>
+                                    <input type="text" id="editCompany${fieldName}" class="form-control">
+                                </div>
+                            </div>
+                        `;
+                }
+                dynamicFormFields += '</div>';
+            }
+
+            $('#dynamicFormFields').html(dynamicFormFields);
+        }
+
+        generateDynamicForm(4, 10);
+       
+
+    });
+
+</script>
+
+
+<div class="container">
+    <div class="row" style="margin: 10px; padding: 10px;">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header" style="text-align:center;">
+                    Company Details
+                </div>
+                <div class="card-body">
+                    <table id="company-table" class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Company Name</th>
+                                <th>Company Address</th>
+                                <th>Email</th>
+                                <th>P.F. No.</th>
+                                <th>E.S.I. No.</th>
+                                <th>Registration Date</th>
+                                <th>Action</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var company in Model)
+                            {
+                                <tr class="company-row">
+                                    <td class="company-id" data-group-id="@company.Id">@company.Id</td>
+                                    <td class="company-name">@company.Name</td>
+                                    <td class="company-address1">@company.Address1</td>
+                                    <td class="company-email">@company.Email</td>
+                                    <td class="company-pfno">@company.Pfno</td>
+                                    <td class="company-esino">@company.Esino</td>
+                                    <td class="company-regdate">@company.RegistrationDate</td>
+                                    <td>
+                                        <button class="edit-button" data-id="@company.Id" data-toggle="modal" data-target="#editModal">
+                                            <img src="~/images/edit-icon.png" title="Edit" style="height: 17px; width: 18px; border: none;cursor:pointer;" />
+                                        </button>
+                                        <button class="delete-button" data-id="@company.Id">
+                                            <img src="~/images/delete-icon.png" title="Delete" style="height: 17px; width: 18px; border: none;cursor:pointer;" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Company Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    
+                    <!-- Dynamic form fields will be inserted here -->
+                    <div id="dynamicFormFields" class="row"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditButton">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>

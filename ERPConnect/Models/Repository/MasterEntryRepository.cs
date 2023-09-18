@@ -30,6 +30,22 @@ namespace ERPConnect.Web.Models.Repository
             }
         }
 
+        public async Task<Company> GetCompanyById(int companyId)
+        {
+            try
+            {
+                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
+
+                return company;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        
+
         public async Task<List<Company>> GetCompany()
         {
             try

@@ -30,46 +30,14 @@ namespace ERPConnect.Web.Models.Repository
             }
         }
 
-        public async Task<Company> GetCompanyById(int companyId)
+        public async Task<CompanyGroup> GetCompanyGroupById(int id)
         {
             try
             {
-                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
-
-                return company;
+                var companyGroup = await _dbContext.CompanyGroups.FirstOrDefaultAsync(c => c.Id == id);
+                return companyGroup;
             }
-            catch
-            {
-                throw;
-            }
-        }
-
-        
-
-        public async Task<List<Company>> GetCompany()
-        {
-            try
-            {
-                var lstCompany = await _dbContext.Companies.ToListAsync();
-
-                return lstCompany;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public Company AddCompany(Company company)
-        {
-            try
-            {
-                var addedCompany = _dbContext.Companies.Add(company).Entity;
-                _dbContext.SaveChanges();
-
-                return addedCompany;
-            }
-            catch
+            catch (Exception ex)
             {
                 throw;
             }
@@ -100,7 +68,7 @@ namespace ERPConnect.Web.Models.Repository
             {
                 throw;
             }
-        }       
+        }
 
         public async Task<CompanyGroup> AddCompanyGroup(CompanyGroup newCompanyGrup)
         {
@@ -136,20 +104,113 @@ namespace ERPConnect.Web.Models.Repository
             {
                 throw ex;
             }
-        }
+        }       
 
-        public async Task<CompanyGroup> GetCompanyGroupById(int id)
+        public async Task<List<Company>> GetCompany()
         {
             try
             {
-                var companyGroup = await _dbContext.CompanyGroups.FirstOrDefaultAsync(c => c.Id == id);
-                return companyGroup;
+                var lstCompany = await _dbContext.Companies.ToListAsync();
+
+                return lstCompany;
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }
         }
 
+        public async Task<Company> GetCompanyById(int companyId)
+        {
+            try
+            {
+                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
+
+                return company;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<Company> UpdateCompany(Company updatedCompanyDetails)
+        {
+            var existingCompany = await _dbContext.Companies.FindAsync(updatedCompanyDetails.Id);
+
+            if (existingCompany == null)
+            {
+                throw new Exception("Company not found");
+            }
+
+            try
+            {
+                existingCompany.Name = updatedCompanyDetails.Name;
+                existingCompany.Address1 = updatedCompanyDetails.Address1;
+                existingCompany.Address2 = updatedCompanyDetails.Address2;
+                existingCompany.KeyPerson = updatedCompanyDetails.KeyPerson;
+                existingCompany.InvolvingIndustry = updatedCompanyDetails.InvolvingIndustry;
+                existingCompany.PhoneNo = updatedCompanyDetails.PhoneNo;
+                existingCompany.FaxNo = updatedCompanyDetails.FaxNo;
+                existingCompany.Email = updatedCompanyDetails.Email;
+                existingCompany.Pfno = updatedCompanyDetails.Pfno;
+                existingCompany.Esino = updatedCompanyDetails.Esino;
+                existingCompany.HeadOffice = updatedCompanyDetails.HeadOffice;
+                existingCompany.PanNo = updatedCompanyDetails.PanNo;
+                existingCompany.RegNo = updatedCompanyDetails.RegNo;
+                existingCompany.KeyPersonAddress = updatedCompanyDetails.KeyPersonAddress;
+                existingCompany.KeyPersonPhNo = updatedCompanyDetails.KeyPersonPhNo;
+                existingCompany.KeyPersonDob = updatedCompanyDetails.KeyPersonDob;
+                existingCompany.KeyDesignation = updatedCompanyDetails.KeyDesignation;
+                existingCompany.RegistrationDate = updatedCompanyDetails.RegistrationDate;
+                existingCompany.CreatedBy = updatedCompanyDetails.CreatedBy;
+                existingCompany.CreatedOn = updatedCompanyDetails.CreatedOn;
+                existingCompany.UpdatedBy = 1;
+                existingCompany.UpdatedOn = DateTime.Now;
+
+                await _dbContext.SaveChangesAsync();
+
+                return existingCompany;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Company> AddCompany(Company newCompany)
+        {
+            try
+            {
+                var addedCompany = _dbContext.Companies.Add(newCompany).Entity;
+                _dbContext.SaveChanges();
+
+                return addedCompany;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task DeleteCompany(int companyId)
+        {
+            try
+            {
+                var company = await _dbContext.Companies.FindAsync(companyId);
+
+                if (company != null)
+                {
+                    _dbContext.Companies.Remove(company);
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }      
+
+        
     }
 }

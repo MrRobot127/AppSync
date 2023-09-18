@@ -136,25 +136,25 @@
                 if (response.success) {
                     const newGroup = JSON.parse(response.data);
                     const newRow = `
-                                            <tr class="company-group-row">
-                                                <td class="group-id">${newGroup.Id}</td>
-                                                <td class="group-name" data-original-value="${newGroup.GroupName}" data-group-id="${newGroup.Id}">${newGroup.GroupName}</td>
-                                                <td>
-                                                    <button class="edit-button" data-id="${newGroup.Id}">
-                                                        <img src="/images/edit-icon.png" title="Edit" style="height: 17px; width: 18px; border: none;" />
-                                                    </button>
-                                                    <button class="delete-button" data-id="${newGroup.Id}">
-                                                        <img src="/images/delete-icon.png" title="Delete" style="height: 17px; width: 18px; border: none;" />
-                                                    </button>
-                                                    <button class="save-button" data-id="${newGroup.Id}" style="display:none;">
-                                                        <img src="/images/save-icon.png" title="Save" style="height: 17px; width: 18px; border: none;" />
-                                                    </button>
-                                                    <button class="cancel-button" data-id="${newGroup.Id}" style="display:none;">
-                                                        <img src="/images/cancel-icon.jpg" title="Cancel" style="height: 25px; width: 26px; border: none;" />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        `;
+                                    <tr class="company-group-row">
+                                        <td class="group-id">${newGroup.Id}</td>
+                                        <td class="group-name" data-original-value="${newGroup.GroupName}" data-group-id="${newGroup.Id}">${newGroup.GroupName}</td>
+                                        <td>
+                                            <button class="edit-button" data-id="${newGroup.Id}">
+                                                <i class="fas fa-edit" title="Edit"></i>
+                                            </button>
+                                            <button class="delete-button" data-id="${newGroup.Id}">
+                                                <i class="fas fa-trash" title="Delete"></i>
+                                            </button>
+                                            <button class="save-button" data-id="${newGroup.Id}" style="display:none;">
+                                                <i class="fas fa-save" title="Save"></i>
+                                            </button>
+                                            <button class="cancel-button" data-id="${newGroup.Id}" style="display:none;">
+                                                <i class="fas fa-times-circle" title="Cancel"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
 
                     $('#company-group-table tbody').append(newRow);
 
@@ -170,6 +170,7 @@
             }
         });
     }
+
 
     function updateCompanyGroup($row) {
 
@@ -262,16 +263,16 @@
                                     <td class="group-name" data-group-id="@group.Id">@group.GroupName</td>
                                     <td>
                                         <button class="edit-button" data-id="@group.Id">
-                                            <img src="~/images/edit-icon.png" title="Edit" style="height: 17px; width: 18px; border: none;" />
+                                            <i class="fas fa-edit" title="Edit"></i>
                                         </button>
                                         <button class="delete-button" data-id="@group.Id">
-                                            <img src="~/images/delete-icon.png" title="Delete" style="height: 17px; width: 18px; border: none;" />
+                                            <i class="fas fa-trash" title="Delete"></i>
                                         </button>
                                         <button class="save-button" data-id="@group.Id" style="display:none;">
-                                            <img src="~/images/save-icon.png" title="Save" style="height: 17px; width: 18px; border: none;" />
+                                            <i class="fas fa-save" title="Save"></i>
                                         </button>
                                         <button class="cancel-button" data-id="@group.Id" style="display:none;">
-                                            <img src="~/images/cancel-icon.jpg" title="Cancel" style="height: 25px; width: 26px; border: none;" />
+                                            <i class="fas fa-times-circle" title="Cancel"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -285,7 +286,7 @@
                                 </td>
                                 <td>
                                     <button class="add-new-button">
-                                        <img src="~/images/add-icon.png" title="Add New" style="height: 17px; width: 18px; border: none;" />
+                                        <i class="fas fa-plus-circle" title="Add New"></i>
                                     </button>
                                 </td>
                             </tr>

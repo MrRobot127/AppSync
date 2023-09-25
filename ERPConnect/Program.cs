@@ -1,6 +1,4 @@
-
-
-using ERPConnect.Web.Extensions;
+using ERPConnect.Web;
 using log4net.Config;
 
 var builder = WebApplication.CreateBuilder(args);

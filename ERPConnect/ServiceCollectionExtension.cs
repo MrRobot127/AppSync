@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace ERPConnect.Web.Extensions
+namespace ERPConnect.Web
 {
     public static class ServiceCollectionExtension
     {

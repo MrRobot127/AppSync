@@ -1,6 +1,4 @@
-﻿
-using ERPConnect.Web.Extensions;
-using ERPConnect.Web.Models.Entity_Tables;
+﻿using ERPConnect.Web.Models.Entity_Tables;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

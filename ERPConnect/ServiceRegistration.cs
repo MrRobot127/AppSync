@@ -8,7 +8,7 @@ using System;
 
 namespace ERPConnect.Web
 {
-    public static class ServiceCollectionExtension
+    public static class ServiceRegistration
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {

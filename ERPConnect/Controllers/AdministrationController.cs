@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace ERPConnect.Web.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminRolePolicy")]
     public class AdministrationController : BaseController
     {
         private readonly RoleManager<IdentityRole> roleManager;
@@ -56,7 +56,7 @@ namespace ERPConnect.Web.Controllers
                     userClaim.IsSelected = true;
                 }
 
-                model.Cliams.Add(userClaim);
+                model.Claims.Add(userClaim);
             }
             return View(model);
         }
@@ -82,9 +82,13 @@ namespace ERPConnect.Web.Controllers
                 return View(model);
             }
 
-            // Add all the claims that are selected on the UI
+            // Add all the claims that are selected on the UI            
+
             result = await userManager.AddClaimsAsync(user,
-                model.Cliams.Where(c => c.IsSelected).Select(c => new Claim(c.ClaimType, c.ClaimType)));
+                model.Claims
+                    .Where(c => c.IsSelected) // Only select claims where IsSelected is true
+                    .Select(c => new Claim(c.ClaimType, c.IsSelected.ToString())) // Convert boolean to string
+            );
 
             if (!result.Succeeded)
             {
@@ -268,6 +272,7 @@ namespace ERPConnect.Web.Controllers
         }
 
         [HttpPost]
+       
         public async Task<IActionResult> EditRole(EditRoleViewModel model)
         {
             var role = await roleManager.FindByIdAsync(model.Id);
@@ -299,6 +304,7 @@ namespace ERPConnect.Web.Controllers
         // ***************** Manage User Role
 
         [HttpGet]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> ManageUserRoles(string userId)
         {
             ViewBag.userId = userId;
@@ -494,6 +500,6 @@ namespace ERPConnect.Web.Controllers
             return RedirectToAction("EditRole", new { Id = roleId });
         }
 
-        
+
     }
 }

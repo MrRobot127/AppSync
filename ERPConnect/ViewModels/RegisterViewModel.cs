@@ -10,7 +10,7 @@ namespace ERPConnect.Web.ViewModels
         [Required]
         [EmailAddress]
         [Remote(action: "IsEmailInUse", controller: "Account")]
-        [ValidEmailDomain(allowedDomain: "ERPConnect.com", ErrorMessage = "Email domain must be ERPConnect.com")]
+        [ValidEmailDomain(allowedDomain: "foo.com", ErrorMessage = "Email domain must be foo.com")]
         public string Email { get; set; }
 
         [Required]

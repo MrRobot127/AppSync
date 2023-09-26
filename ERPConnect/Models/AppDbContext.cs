@@ -23,11 +23,18 @@ namespace ERPConnect.Web.Models.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
             modelBuilder.Entity<MenuItem>(entity =>
             {
-                entity.ToTable("MenuItem");
+                entity.Property(e => e.MenuItemId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("MenuItemID");
 
-                entity.Property(e => e.MenuItemId).HasColumnName("MenuItemID");
+                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.Name).HasMaxLength(255);
 
@@ -124,10 +131,10 @@ namespace ERPConnect.Web.Models.Context
             modelBuilder.Entity<ApplicationUser>().HasData(new ApplicationUser
             {
                 Id = ADMIN_ID,
-                UserName = "admin@admin.com",
-                NormalizedUserName = "admin@admin.com".ToUpper(),
-                Email = "admin@admin.com",
-                NormalizedEmail = "admin@admin.com".ToUpper(),
+                UserName = "Admin",
+                NormalizedUserName = "Admin".ToUpper(),
+                Email = "admin@secureapp.com",
+                NormalizedEmail = "admin@secureapp.com".ToUpper(),
                 EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(null, "Admin@123"),
                 SecurityStamp = string.Empty

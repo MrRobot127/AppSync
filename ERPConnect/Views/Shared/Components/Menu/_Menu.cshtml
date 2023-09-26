@@ -9,15 +9,14 @@
         transition: color 0.3s;
     }
 
-    /* Change text color on hover */
-    .navbar-nav .nav-link:hover, .dropdown-menu .dropdown-item:hover {
-        color: #FF5733;
-    }
+        /* Change text color on hover */
+        .navbar-nav .nav-link:hover, .dropdown-menu .dropdown-item:hover {
+            color: #FF5733;
+        }
 
     .nav-link.active {
         font-weight: bold;
     }
-
 
 </style>
 
@@ -41,31 +40,34 @@
             <ul class="navbar-nav">
                 @foreach (var menuItem in Model.Where(m => m.ParentMenuItemId == null)) // Top-level menu items
                 {
-                    <li class="nav-item custom-dropdown">
-                        <a class="nav-link" href="@menuItem.Url">@menuItem.Name</a>
-                        @if (menuItem.InverseParentMenuItem.Any()) // Check for sub-items
-                        {
-                            <ul class="dropdown-menu fade-up">
-                                @foreach (var subItem in menuItem.InverseParentMenuItem) // Second-level menu items
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="@subItem.Url">@subItem.Name</a>
-                                        @if (subItem.InverseParentMenuItem.Any()) // Check for third-level items
-                                        {
-                                            <ul class="dropdown-menu fade-up">
-                                                @foreach (var thirdLevelItem in subItem.InverseParentMenuItem) // Third-level menu items
-                                                {
-                                                    <li class="nav-item">
-                                                        <a class="nav-link" href="@thirdLevelItem.Url">@thirdLevelItem.Name</a>
-                                                    </li>
-                                                }
-                                            </ul>
-                                        }
-                                    </li>
-                                }
-                            </ul>
-                        }
-                    </li>
+                    @if (User.IsInRole("Admin") || menuItem.Name.ToLower() != "manage")
+                    {
+                        <li class="nav-item custom-dropdown">
+                            <a class="nav-link" href="@menuItem.Url">@menuItem.Name</a>
+                            @if (menuItem.InverseParentMenuItem.Any()) // Check for sub-items
+                            {
+                                <ul class="dropdown-menu fade-up">
+                                    @foreach (var subItem in menuItem.InverseParentMenuItem) // Second-level menu items
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="@subItem.Url">@subItem.Name</a>
+                                            @if (subItem.InverseParentMenuItem.Any()) // Check for third-level items
+                                            {
+                                                <ul class="dropdown-menu fade-up">
+                                                    @foreach (var thirdLevelItem in subItem.InverseParentMenuItem) // Third-level menu items
+                                                    {
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" href="@thirdLevelItem.Url">@thirdLevelItem.Name</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </li>
+                    }
                 }
             </ul>
             <ul class="navbar-nav ms-auto">

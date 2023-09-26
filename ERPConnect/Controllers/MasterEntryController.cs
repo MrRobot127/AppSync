@@ -24,12 +24,14 @@ namespace ERPConnect.Web.Controllers
             return View(companyGroup);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Company()
+        [HttpGet("GetCompanyById/{id}")]
+        public async Task<IActionResult> GetCompanyById(int id)
         {
-            var company = await _unitOfWork.MasterEntry.GetCompany();
+            var company = await _unitOfWork.MasterEntry.GetCompanyById(id);
 
-            return View(company);
+            var jsonResult = new JsonResult(new { success = true, data = company });
+
+            return jsonResult;
         }
 
         [HttpPost]
@@ -85,5 +87,69 @@ namespace ERPConnect.Web.Controllers
 
             return Ok(new { success = true, msg = "CompanyGroup deleted successfully" });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Company()
+        {
+            var company = await _unitOfWork.MasterEntry.GetCompany();
+
+            return View(company);
+        }               
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCompanyDetails([FromBody] Company updatedCompanyDetails)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var updatedData = await _unitOfWork.MasterEntry.UpdateCompany(updatedCompanyDetails);
+                    var updatedDataArray = JsonConvert.SerializeObject(updatedData);
+
+                    return Json(new { success = true, data = updatedDataArray });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, msg = ex.Message });
+                }
+            }
+
+            // If ModelState is not valid, return validation errors as JSON
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                      .Select(e => e.ErrorMessage)
+                                      .ToList();
+            return Json(new { success = false, errors });
+        }        
+
+        [HttpPost]
+        public async Task<IActionResult> AddCompany(Company newCompany)
+        {
+            if (ModelState.IsValid)
+            {
+                var company = await _unitOfWork.MasterEntry.AddCompany(newCompany);
+                return Json(new { success = true, data = JsonConvert.SerializeObject(company) });
+
+            }
+            var errors = ModelState.SelectMany(x => x.Value.Errors.Select(e => e.ErrorMessage));
+            return Json(new { success = false, errors });
+
+        }
+       
+
+        [HttpDelete("DeleteCompany/{id}")]
+        public async Task<IActionResult> DeleteCompany(int id)
+        {
+            var company = await _unitOfWork.MasterEntry.GetCompanyById(id);
+
+            if (company == null)
+            {
+                return NotFound(new { success = false, msg = "Company not found!" });
+            }
+
+            await _unitOfWork.MasterEntry.DeleteCompany(id);
+
+            return Ok(new { success = true, msg = "Company deleted successfully" });
+        }
+
     }
 }

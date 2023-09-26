@@ -7,46 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPConnect.Web.Controllers
 {
-    [Authorize]
-    public class BaseController : Controller
+    public abstract class BaseController : Controller
     {
 
         [HttpGet]
         public IActionResult AccessDenied()
         {
-            return View("~/Views/Account/AccessDenied.cshtml");
+            return View("~/Views/Administration/AccessDenied.cshtml");
         }
-
-        //public override void OnActionExecuting(ActionExecutingContext filterContext)
-        //{
-        //    var menuData = GetMenuData();
-        //    ViewBag.MenuData = menuData;
-
-        //    base.OnActionExecuting(filterContext);
-        //}
-
-        //private List<MenuItem> GetMenuData()
-        //{
-        //    var menuData = new List<MenuItem>
-        //    {
-        //        new MenuItem
-        //        {
-        //            Title = "Home",
-        //            URL = "/home/Index",
-        //            Submenu = new List<MenuItem>
-        //            {
-        //                new MenuItem { Title = "Subitem 1", URL = "/home/index" },
-        //                new MenuItem { Title = "Subitem 2", URL = "/home/subitem2" }
-        //            }
-        //        },
-        //        new MenuItem
-        //        {
-        //            Title = "About",
-        //            URL = "/about"
-        //        },
-        //    };
-
-        //    return menuData;
-        //}
     }
 }

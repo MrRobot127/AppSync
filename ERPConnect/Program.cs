@@ -1,21 +1,13 @@
-
-
-using ERPConnect.Web.Extensions;
+using ERPConnect.Web;
 using log4net.Config;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Load app settings from appsettings.json or other configuration sources.
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json")
-    .Build();
 
 //Configure Log4net.
 XmlConfigurator.Configure(new FileInfo("log4net.config"));
 
 //Injecting services.
-builder.Services.RegisterServices(configuration);
+builder.Services.RegisterServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -27,8 +19,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseAuthentication();
+
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>

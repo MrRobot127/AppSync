@@ -30,7 +30,7 @@
     });
 </script>
 
-@if (signInManager.IsSignedIn(User))
+@if (signInManager.IsSignedIn(User) && !User.HasClaim("FirstTimeLogin", "True"))
 {
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" asp-controller="home" asp-action="index">

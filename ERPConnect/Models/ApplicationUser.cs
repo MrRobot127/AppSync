@@ -4,5 +4,6 @@ namespace ERPConnect.Web.Models
 {
     public class ApplicationUser : IdentityUser
     {
+
     }
 }

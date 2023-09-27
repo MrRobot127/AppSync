@@ -38,14 +38,17 @@ namespace ERPConnect.Web
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("FirstTimePasswordChangePolicy",
+                    policy => policy.RequireClaim("FirstTimeLogin", "True"));
+
                 options.AddPolicy("AdminRolePolicy",
-                    policy => policy.RequireRole("Admin"));                
+                    policy => policy.RequireRole("Admin","True"));
 
                 options.AddPolicy("EditRolePolicy",
                     policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
 
                 options.AddPolicy("DeleteRolePolicy",
-                    policy => policy.RequireClaim("Delete Role"));
+                    policy => policy.RequireClaim("DeleteRole","True"));
 
             });
 

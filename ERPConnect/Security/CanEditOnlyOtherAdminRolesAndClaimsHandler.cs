@@ -22,7 +22,7 @@ namespace ERPConnect.Web.Security
 
             var adminIdBeingEdited = httpContextAccessor.HttpContext.Request.Query["userId"].ToString();
 
-            if (context.User.IsInRole("Admin") && context.User.HasClaim(claim => claim.Type == "Edit Role" && claim.Value.ToLower() == "true".ToLower())
+            if (context.User.IsInRole("Admin") && context.User.HasClaim(claim => claim.Type == "EditRole" && claim.Value.ToLower() == "true".ToLower())
                 && adminIdBeingEdited.ToLower() != loggedInAdminId.ToLower())
             {
                 context.Succeed(requirement);

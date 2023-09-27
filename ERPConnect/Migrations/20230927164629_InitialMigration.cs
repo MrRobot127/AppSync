@@ -231,12 +231,17 @@ namespace ERPConnect.Web.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "b8feecc3-3e04-4dff-a74f-b14e77ede662", "ccd4771e-2082-47c1-a32b-f6a17aa8be20", "Admin", "ADMIN" });
+                values: new object[] { "b8feecc3-3e04-4dff-a74f-b14e77ede662", "6075d9f8-277b-4ce8-ac2c-73f1c719a7ef", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "6544a9ce-b9a5-42ba-8fdc-9f498c14a745", 0, "bec70945-8a8f-42da-8078-b3399cc85e78", "admin@admin.com", true, false, null, "ADMIN@ADMIN.COM", "ADMIN@ADMIN.COM", "AQAAAAEAACcQAAAAEA9qPNz6mHBfxa2d6bBh8AXPoLHLtOs5wmSQaI0nIxdpMGNP9Wfu5LzbobkAbxKGYA==", null, false, "", false, "admin@admin.com" });
+                values: new object[] { "6544a9ce-b9a5-42ba-8fdc-9f498c14a745", 0, "d3f994a7-22ad-41cc-b92c-3de313a4578d", "admin@secureapp.com", true, false, null, "ADMIN@SECUREAPP.COM", "ADMIN@SECUREAPP.COM", "AQAAAAEAACcQAAAAEHRNgaUSmdJzkf2nymH6TvI0LBWibly5tYdnIvqGySqRGfD7aKSC0L4U7lG0AlH+JQ==", null, false, "", false, "admin@secureapp.com" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserClaims",
+                columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
+                values: new object[] { 1, "FirstTimeLogin", "True", "6544a9ce-b9a5-42ba-8fdc-9f498c14a745" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

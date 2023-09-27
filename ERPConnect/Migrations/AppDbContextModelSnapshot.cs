@@ -91,17 +91,17 @@ namespace ERPConnect.Web.Migrations
                         {
                             Id = "6544a9ce-b9a5-42ba-8fdc-9f498c14a745",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bec70945-8a8f-42da-8078-b3399cc85e78",
-                            Email = "admin@admin.com",
+                            ConcurrencyStamp = "d3f994a7-22ad-41cc-b92c-3de313a4578d",
+                            Email = "admin@secureapp.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@ADMIN.COM",
-                            NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEA9qPNz6mHBfxa2d6bBh8AXPoLHLtOs5wmSQaI0nIxdpMGNP9Wfu5LzbobkAbxKGYA==",
+                            NormalizedEmail = "ADMIN@SECUREAPP.COM",
+                            NormalizedUserName = "ADMIN@SECUREAPP.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHRNgaUSmdJzkf2nymH6TvI0LBWibly5tYdnIvqGySqRGfD7aKSC0L4U7lG0AlH+JQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
-                            UserName = "admin@admin.com"
+                            UserName = "admin@secureapp.com"
                         });
                 });
 
@@ -302,8 +302,8 @@ namespace ERPConnect.Web.Migrations
                         new
                         {
                             Id = "b8feecc3-3e04-4dff-a74f-b14e77ede662",
-                            ConcurrencyStamp = "ccd4771e-2082-47c1-a32b-f6a17aa8be20",
-                            Name = "Admin",
+                            ConcurrencyStamp = "6075d9f8-277b-4ce8-ac2c-73f1c719a7ef",
+                            Name = "admin",
                             NormalizedName = "ADMIN"
                         });
                 });
@@ -356,6 +356,15 @@ namespace ERPConnect.Web.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "FirstTimeLogin",
+                            ClaimValue = "True",
+                            UserId = "6544a9ce-b9a5-42ba-8fdc-9f498c14a745"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>

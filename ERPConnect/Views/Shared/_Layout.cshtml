@@ -1,4 +1,4 @@
-﻿
+﻿@inject SignInManager<ApplicationUser> signInManager
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -27,13 +27,18 @@
 <body>
     <div class="container-fluid">
 
-        <div id="menu">
-            @await Component.InvokeAsync("Menu")
-        </div>
+
+        @if (signInManager.IsSignedIn(User))
+        {
+            <div id="menu">
+                @await Component.InvokeAsync("Menu")
+            </div>
+        }
 
         <div>
             @RenderBody()
         </div>
+
 
         @if (IsSectionDefined("Scripts"))
         {

@@ -1,8 +1,10 @@
 ﻿using ERPConnect.Web.Models;
 using ERPConnect.Web.ViewModels;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ERPConnect.Web.Controllers
 {
@@ -67,6 +69,10 @@ namespace ERPConnect.Web.Controllers
         {
             if (signInManager.IsSignedIn(User))
             {
+                if (User.HasClaim("FirstTimeLogin", "True"))
+                {
+                    return RedirectToAction("FirstTimePasswordChange", "Account");
+                }
                 return RedirectToAction("Index", "Home");
             }
             return View();
@@ -78,25 +84,41 @@ namespace ERPConnect.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(
-                    model.Email, model.Password, model.RememberMe, false);
+                var user = await userManager.FindByEmailAsync(model.Email);
 
-                if (result.Succeeded)
+                if (user != null)
                 {
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+
+                    if (result.Succeeded)
                     {
-                        return Redirect(returnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
+                        var hasFirstTimeLoginClaim = await userManager.GetClaimsAsync(user);
+
+                        if (hasFirstTimeLoginClaim.Any(claim => claim.Type == "FirstTimeLogin" && claim.Value == "True"))
+                        {
+                            return RedirectToAction("FirstTimePasswordChange", "Account");
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                            {
+                                return Redirect(returnUrl);
+                            }
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                 }
 
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
             }
-
             return View(model);
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "FirstTimePasswordChangePolicy")]
+        public IActionResult FirstTimePasswordChange()
+        {
+            return View();
         }
 
         // ***************** While User Registration Check if Entered User is Already in Use or not

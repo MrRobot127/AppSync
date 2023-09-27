@@ -122,8 +122,8 @@ namespace ERPConnect.Web.Models.Context
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
             {
                 Id = ROLE_ID,
-                Name = "Admin",
-                NormalizedName = "Admin".ToUpper()
+                Name = "admin",
+                NormalizedName = "admin".ToUpper()
             });
 
             var hasher = new PasswordHasher<ApplicationUser>();
@@ -131,19 +131,29 @@ namespace ERPConnect.Web.Models.Context
             modelBuilder.Entity<ApplicationUser>().HasData(new ApplicationUser
             {
                 Id = ADMIN_ID,
-                UserName = "Admin",
-                NormalizedUserName = "Admin".ToUpper(),
+                UserName = "admin@secureapp.com",
+                NormalizedUserName = "admin@secureapp.com".ToUpper(),
                 Email = "admin@secureapp.com",
                 NormalizedEmail = "admin@secureapp.com".ToUpper(),
                 EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(null, "Admin@123"),
                 SecurityStamp = string.Empty
+               
             });
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
             {
                 RoleId = ROLE_ID,
                 UserId = ADMIN_ID
+            });
+
+            // Add the "FirstTimeLogin" claim to the admin user
+            modelBuilder.Entity<IdentityUserClaim<string>>().HasData(new IdentityUserClaim<string>
+            {
+                Id = 1,
+                UserId = ADMIN_ID,
+                ClaimType = "FirstTimeLogin",
+                ClaimValue = "True"
             });
         }
 

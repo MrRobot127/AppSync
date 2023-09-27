@@ -26,15 +26,15 @@ namespace ERPConnect.Web
 
             }).AddEntityFrameworkStores<AppDbContext>();
 
-            services.AddMvc(options =>
-            {
-                //To apply[Authorize] attribute globally on all controllers and controller actions throughout our application
-                var policy = new AuthorizationPolicyBuilder()
-                                .RequireAuthenticatedUser()
-                                .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
+            //services.AddMvc(options =>
+            //{
+            //    //To apply[Authorize] attribute globally on all controllers and controller actions throughout our application
+            //    var policy = new AuthorizationPolicyBuilder()
+            //                    .RequireAuthenticatedUser()
+            //                    .Build();
+            //    options.Filters.Add(new AuthorizeFilter(policy));
 
-            }).AddXmlSerializerFormatters();
+            //}).AddXmlSerializerFormatters();
 
             services.AddAuthorization(options =>
             {

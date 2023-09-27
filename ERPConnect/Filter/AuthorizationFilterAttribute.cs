@@ -7,13 +7,15 @@ namespace ERPConnect.Web.Filter
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
+            var actionName = context.RouteData.Values["action"]?.ToString();
+
             var authController = new Controllers.AuthController();
 
             var hasFirstTimeLoginClaim = context.HttpContext.User.HasClaim("FirstTimeLogin", "True");
 
-            if (hasFirstTimeLoginClaim)
+            if (hasFirstTimeLoginClaim && context.HttpContext.User.Identity.IsAuthenticated && !actionName.Equals("Logout", StringComparison.OrdinalIgnoreCase))
             {
-                context.Result = authController.FirstTimePasswordChange();                
+                context.Result = authController.FirstTimePasswordChange();
                 return;
             }
         }

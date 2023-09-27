@@ -30,43 +30,49 @@
     });
 </script>
 
-@if (signInManager.IsSignedIn(User) && !User.HasClaim("FirstTimeLogin", "True"))
+@if (signInManager.IsSignedIn(User))
 {
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" asp-controller="home" asp-action="index">
-            <img src="~/images/home.png">
-        </a>
+        @if (!User.HasClaim("FirstTimeLogin", "True"))
+        {
+            <a class="navbar-brand" asp-controller="home" asp-action="index">
+                <img src="~/images/home.png">
+            </a>
+        }
         <div class=" navbar-collapse" id="main_nav">
             <ul class="navbar-nav">
-                @foreach (var menuItem in Model.Where(m => m.ParentMenuItemId == null)) // Top-level menu items
+                @if (!User.HasClaim("FirstTimeLogin", "True"))
                 {
-                    @if (User.IsInRole("Admin") || menuItem.Name.ToLower() != "manage")
+                    @foreach (var menuItem in Model.Where(m => m.ParentMenuItemId == null)) // Top-level menu items
                     {
-                        <li class="nav-item custom-dropdown">
-                            <a class="nav-link" href="@menuItem.Url">@menuItem.Name</a>
-                            @if (menuItem.InverseParentMenuItem.Any()) // Check for sub-items
-                            {
-                                <ul class="dropdown-menu fade-up">
-                                    @foreach (var subItem in menuItem.InverseParentMenuItem) // Second-level menu items
-                                    {
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="@subItem.Url">@subItem.Name</a>
-                                            @if (subItem.InverseParentMenuItem.Any()) // Check for third-level items
-                                            {
-                                                <ul class="dropdown-menu fade-up">
-                                                    @foreach (var thirdLevelItem in subItem.InverseParentMenuItem) // Third-level menu items
-                                                    {
-                                                        <li class="nav-item">
-                                                            <a class="nav-link" href="@thirdLevelItem.Url">@thirdLevelItem.Name</a>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            }
-                                        </li>
-                                    }
-                                </ul>
-                            }
-                        </li>
+                        @if (User.IsInRole("Admin") || menuItem.Name.ToLower() != "manage")
+                        {
+                            <li class="nav-item custom-dropdown">
+                                <a class="nav-link" href="@menuItem.Url">@menuItem.Name</a>
+                                @if (menuItem.InverseParentMenuItem.Any()) // Check for sub-items
+                                {
+                                    <ul class="dropdown-menu fade-up">
+                                        @foreach (var subItem in menuItem.InverseParentMenuItem) // Second-level menu items
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="@subItem.Url">@subItem.Name</a>
+                                                @if (subItem.InverseParentMenuItem.Any()) // Check for third-level items
+                                                {
+                                                    <ul class="dropdown-menu fade-up">
+                                                        @foreach (var thirdLevelItem in subItem.InverseParentMenuItem) // Third-level menu items
+                                                        {
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" href="@thirdLevelItem.Url">@thirdLevelItem.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
                     }
                 }
             </ul>

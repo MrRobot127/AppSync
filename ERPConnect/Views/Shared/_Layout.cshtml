@@ -28,7 +28,7 @@
     <div class="container-fluid">
 
 
-        @if (signInManager.IsSignedIn(User) && !User.HasClaim("FirstTimeLogin", "True"))
+        @if (signInManager.IsSignedIn(User))
         {
             <div id="menu">
                 @await Component.InvokeAsync("Menu")

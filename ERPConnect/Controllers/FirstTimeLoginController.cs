@@ -51,12 +51,12 @@ namespace ERPConnect.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterEmail(FirstTimeLoginViewModel model)
         {
-            if (!string.IsNullOrEmpty(model.ExternalEmail))
+            if (!string.IsNullOrEmpty(model.Email))
             {
                 string secretKey = configuration["AppSettings:SecretKey"];
                 string otp = OTPGenerator.GenerateOTP(secretKey);
 
-                string toEmail = model.ExternalEmail;
+                string toEmail = model.Email;
                 string Subject = "OTP Verification";
                 string body = $"Your OTP is: {otp}";
 
@@ -85,8 +85,7 @@ namespace ERPConnect.Web.Controllers
 
         [HttpPost]
         public IActionResult VerifyOTP(FirstTimeLoginViewModel model)
-        {
-            //HttpContext.Session.Remove("OtpSent");
+        {           
 
             return RedirectToAction("FirstTimeLogin");
         }

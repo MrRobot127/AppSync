@@ -29,12 +29,10 @@
                             }
                         }
                     }
-
                     context.Response.Redirect("/FirstTimeLogin/Index");
                     return;
                 }
             }
-
             await _next(context);
         }
     }

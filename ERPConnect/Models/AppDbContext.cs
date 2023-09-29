@@ -18,6 +18,7 @@ namespace ERPConnect.Web.Models.Context
         public virtual DbSet<Company> Companies { get; set; } = null!;
         public virtual DbSet<CompanyGroup> CompanyGroups { get; set; } = null!;
         public virtual DbSet<MenuItem> MenuItems { get; set; } = null!;
+        public virtual DbSet<Otpverification> Otpverifications { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -110,6 +111,19 @@ namespace ERPConnect.Web.Models.Context
                 entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
             });
 
+            modelBuilder.Entity<Otpverification>(entity =>
+            {
+                entity.ToTable("OTPVerification");
+
+                entity.Property(e => e.ExpirationTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Otp)
+                    .HasMaxLength(10)
+                    .HasColumnName("OTP");
+
+                entity.Property(e => e.UserId).HasMaxLength(256);
+            });
+
             SeedInitialData(modelBuilder);
         }
 
@@ -137,8 +151,9 @@ namespace ERPConnect.Web.Models.Context
                 NormalizedEmail = "admin@secureapp.com".ToUpper(),
                 EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(null, "Admin@123"),
+                ExternalEmail = null,
                 SecurityStamp = string.Empty
-               
+
             });
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>

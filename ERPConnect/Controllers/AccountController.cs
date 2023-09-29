@@ -19,6 +19,8 @@ namespace ERPConnect.Web.Controllers
             this.signInManager = signInManager;
         }
 
+       
+
         // ***************** Register Users
         [Authorize(Roles = "Admin")]
         [HttpGet]

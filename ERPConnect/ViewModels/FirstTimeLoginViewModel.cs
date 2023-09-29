@@ -2,8 +2,16 @@
 
 namespace ERPConnect.Web.ViewModels
 {
-    public class ChangePasswordViewModel
+    public class FirstTimeLoginViewModel
     {
+        [Required]
+        [EmailAddress]
+        //[Remote(action: "IsEmailInUse", controller: "Account")]
+        public string ExternalEmail { get; set; }
+
+        [Required]
+        public string OTP { get; set; }
+
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Current Password")]

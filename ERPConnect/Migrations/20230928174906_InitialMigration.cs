@@ -28,6 +28,7 @@ namespace ERPConnect.Web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExternalEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -231,12 +232,12 @@ namespace ERPConnect.Web.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "b8feecc3-3e04-4dff-a74f-b14e77ede662", "6075d9f8-277b-4ce8-ac2c-73f1c719a7ef", "admin", "ADMIN" });
+                values: new object[] { "b8feecc3-3e04-4dff-a74f-b14e77ede662", "7925e7aa-f362-4bdd-a498-a51f94109ddf", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "6544a9ce-b9a5-42ba-8fdc-9f498c14a745", 0, "d3f994a7-22ad-41cc-b92c-3de313a4578d", "admin@secureapp.com", true, false, null, "ADMIN@SECUREAPP.COM", "ADMIN@SECUREAPP.COM", "AQAAAAEAACcQAAAAEHRNgaUSmdJzkf2nymH6TvI0LBWibly5tYdnIvqGySqRGfD7aKSC0L4U7lG0AlH+JQ==", null, false, "", false, "admin@secureapp.com" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "ExternalEmail", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "6544a9ce-b9a5-42ba-8fdc-9f498c14a745", 0, "16a609e7-67d2-457e-b457-1c9cea63eb4c", "admin@secureapp.com", true, null, false, null, "ADMIN@SECUREAPP.COM", "ADMIN@SECUREAPP.COM", "AQAAAAEAACcQAAAAEDKLVwiO1LocUGOPTPxJSK26R+YcwUu94vPrSeNQzj6aUKjvc5YY0ZMGCTjeA4ywzA==", null, false, "", false, "admin@secureapp.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserClaims",

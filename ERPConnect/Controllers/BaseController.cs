@@ -1,5 +1,4 @@
-﻿using ERPConnect.Web.Filter;
-using ERPConnect.Web.Models;
+﻿using ERPConnect.Web.Models;
 using ERPConnect.Web.Models.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPConnect.Web.Controllers
 {
-    [AuthorizationFilterAttribute]
     public  class BaseController : Controller
     {
-        public BaseController()
-        {
-            
-        }
 
         [HttpGet]
         public IActionResult AccessDenied()

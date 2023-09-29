@@ -1,0 +1,89 @@
+﻿@model FirstTimeLoginViewModel
+
+@{
+    ViewData["Title"] = "Change Password";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<script>
+    $(document).ready(function () {
+        $("#sendOTP").click(function () {
+            var formData = $("#otpForm").serialize(); // Serialize the form data
+
+            $.ajax({
+                type: "POST", // HTTP method
+                url: $("#otpForm").attr("action"), // URL to your controller action
+                data: formData, // Serialized form data
+                success: function (response) {
+                    $("#ajaxResult").html(response); // Display the response in the result div
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>
+
+@if (User?.Identity?.IsAuthenticated == true && User.HasClaim("FirstTimeLogin", "True"))
+{
+    <div class="alert alert-info">
+        This is your first login, please register your email and then change password.
+    </div>
+
+    @if (ViewBag.UserExternalEmail == "")
+    {
+        @if (ViewBag.TempOtpSentStatus)
+        {
+            <p>OTP sent to @ViewBag.TempExternalEmail </p>
+            <form asp-action="VerifyOTP" asp-controller="FirstTimeLogin" method="post">
+                <div class="form-group m-2">
+                    <label asp-for="OTP">Enter OTP</label>
+                    <input asp-for="OTP" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="OTP" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit OTP</button>
+            </form>
+        }
+        else
+        {
+            <form asp-action="RegisterEmail" asp-controller="FirstTimeLogin" method="post">
+                <div class="form-group m-2">
+                    <label asp-for="ExternalEmail">Email</label>
+                    <input asp-for="ExternalEmail" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="ExternalEmail" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Send OTP</button>
+            </form>
+        }
+    }
+    else
+    {
+        <p>Email Verified. @ViewBag.UserExternalEmail</p>
+
+        <form asp-action="ChangePassword" asp-controller="Account" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="OldPassword">Old Password</label>
+                <input asp-for="OldPassword" class="form-control" />
+                <span asp-validation-for="OldPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NewPassword">New Password</label>
+                <input asp-for="NewPassword" class="form-control" />
+                <span asp-validation-for="NewPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group m-2">
+                <label asp-for="ConfirmPassword">Confirm Password</label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Change Password</button>
+        </form>
+    }
+}

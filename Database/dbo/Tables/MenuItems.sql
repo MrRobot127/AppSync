@@ -17,7 +17,7 @@ GO
 ALTER TABLE [dbo].[MenuItems] ADD  DEFAULT ((1)) FOR [IsActive]
 GO
 
-ALTER TABLE [dbo].[MenuItems]  WITH CHECK ADD  CONSTRAINT [FK_MenuItems_ParentMenuItemID] FOREIGN KEY([ParentMenuItemID])
+ALTER TABLE [dbo].[MenuItems] ADD  CONSTRAINT [FK_MenuItems_ParentMenuItemID] FOREIGN KEY([ParentMenuItemID])
 REFERENCES [dbo].[MenuItems] ([MenuItemID])
 GO
 

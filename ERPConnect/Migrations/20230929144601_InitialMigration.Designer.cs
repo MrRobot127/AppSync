@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPConnect.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230928174906_InitialMigration")]
+    [Migration("20230929144601_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,13 +96,13 @@ namespace ERPConnect.Web.Migrations
                         {
                             Id = "6544a9ce-b9a5-42ba-8fdc-9f498c14a745",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "16a609e7-67d2-457e-b457-1c9cea63eb4c",
+                            ConcurrencyStamp = "c3db9b54-7c5b-4474-b976-7d8e39017085",
                             Email = "admin@secureapp.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@SECUREAPP.COM",
                             NormalizedUserName = "ADMIN@SECUREAPP.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDKLVwiO1LocUGOPTPxJSK26R+YcwUu94vPrSeNQzj6aUKjvc5YY0ZMGCTjeA4ywzA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDL4yQVSNgvAyxLjOBv63qiSTpb60AcYCCbkx1JIpbsSAvS9jezIyAPCvyT9H16Y0A==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -277,6 +277,52 @@ namespace ERPConnect.Web.Migrations
                     b.ToTable("MenuItems");
                 });
 
+            modelBuilder.Entity("ERPConnect.Web.Models.Entity_Tables.Otpverification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("ExpirationTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("FromEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Otp")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("OTP");
+
+                    b.Property<DateTime>("SentOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("ToEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnName("TYPE");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OTPVerification", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -307,7 +353,7 @@ namespace ERPConnect.Web.Migrations
                         new
                         {
                             Id = "b8feecc3-3e04-4dff-a74f-b14e77ede662",
-                            ConcurrencyStamp = "7925e7aa-f362-4bdd-a498-a51f94109ddf",
+                            ConcurrencyStamp = "76ddea6c-38d9-4771-85ce-a63002db6813",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });

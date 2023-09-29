@@ -19,7 +19,6 @@
                     var controllerName = context.GetRouteData().Values["controller"]?.ToString();
                     if (controllerName != null)
                     {
-                        // Check if the controller is the AuthController
                         if (string.Equals(controllerName, "FirstTimeLogin", StringComparison.OrdinalIgnoreCase))
                         {
                             if (!string.Equals(actionName, "RegisterEmail", StringComparison.OrdinalIgnoreCase) ||

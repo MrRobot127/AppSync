@@ -62,7 +62,7 @@ namespace ERPConnect.Web
             services.AddScoped<IMenuServiceRepository, MenuServiceRepository>();
             services.AddScoped<IMasterEntryRepository, MasterEntryRepository>();
             services.AddScoped<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
-            services.AddScoped<IOTPVerificationRepository,OTPVerificationRepository>();
+            services.AddScoped<IOTPVerificationRepository,OTPVerificationRepository>();        
 
         }
     }

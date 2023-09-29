@@ -124,6 +124,25 @@ namespace ERPConnect.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OTPVerification",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    FromEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    ToEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    OTP = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    SentOn = table.Column<DateTime>(type: "datetime", nullable: false),
+                    ExpirationTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    TYPE = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OTPVerification", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -232,12 +251,12 @@ namespace ERPConnect.Web.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "b8feecc3-3e04-4dff-a74f-b14e77ede662", "7925e7aa-f362-4bdd-a498-a51f94109ddf", "admin", "ADMIN" });
+                values: new object[] { "b8feecc3-3e04-4dff-a74f-b14e77ede662", "76ddea6c-38d9-4771-85ce-a63002db6813", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "ExternalEmail", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "6544a9ce-b9a5-42ba-8fdc-9f498c14a745", 0, "16a609e7-67d2-457e-b457-1c9cea63eb4c", "admin@secureapp.com", true, null, false, null, "ADMIN@SECUREAPP.COM", "ADMIN@SECUREAPP.COM", "AQAAAAEAACcQAAAAEDKLVwiO1LocUGOPTPxJSK26R+YcwUu94vPrSeNQzj6aUKjvc5YY0ZMGCTjeA4ywzA==", null, false, "", false, "admin@secureapp.com" });
+                values: new object[] { "6544a9ce-b9a5-42ba-8fdc-9f498c14a745", 0, "c3db9b54-7c5b-4474-b976-7d8e39017085", "admin@secureapp.com", true, null, false, null, "ADMIN@SECUREAPP.COM", "ADMIN@SECUREAPP.COM", "AQAAAAEAACcQAAAAEDL4yQVSNgvAyxLjOBv63qiSTpb60AcYCCbkx1JIpbsSAvS9jezIyAPCvyT9H16Y0A==", null, false, "", false, "admin@secureapp.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserClaims",
@@ -319,6 +338,9 @@ namespace ERPConnect.Web.Migrations
 
             migrationBuilder.DropTable(
                 name: "MenuItems");
+
+            migrationBuilder.DropTable(
+                name: "OTPVerification");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

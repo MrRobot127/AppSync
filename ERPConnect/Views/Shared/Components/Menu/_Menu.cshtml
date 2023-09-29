@@ -2,14 +2,12 @@
 @model List<MenuItem>
 
 <style>
-
-    /* Style to make menu items cursor: pointer and change color on hover */
     .navbar-nav .nav-link, .dropdown-menu .dropdown-item {
         cursor: pointer;
         transition: color 0.3s;
     }
 
-        /* Change text color on hover */
+
         .navbar-nav .nav-link:hover, .dropdown-menu .dropdown-item:hover {
             color: #FF5733;
         }
@@ -82,7 +80,7 @@
                     <li class="nav-item">
                         <form method="post" asp-controller="account" asp-action="logOut">
                             <button type="submit" class="nav-link btn btn-link py-0" style="width:auto">
-                                Logout @User.Identity.Name
+                                Logout @User?.Identity?.Name
                             </button>
                         </form>
                     </li>

@@ -1,4 +1,5 @@
 using ERPConnect.Web;
+using ERPConnect.Web.Middlewares;
 using log4net.Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,8 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<FirstTimeLoginMiddleware>();
 
 app.UseEndpoints(endpoints =>
 {

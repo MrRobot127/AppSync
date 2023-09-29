@@ -3,6 +3,7 @@ using ERPConnect.Web.Models;
 using ERPConnect.Web.Models.Context;
 using ERPConnect.Web.Models.Repository;
 using ERPConnect.Web.Security;
+using ERPConnect.Web.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,15 +27,15 @@ namespace ERPConnect.Web
 
             }).AddEntityFrameworkStores<AppDbContext>();
 
-            //services.AddMvc(options =>
-            //{
-            //    //To apply[Authorize] attribute globally on all controllers and controller actions throughout our application
-            //    var policy = new AuthorizationPolicyBuilder()
-            //                    .RequireAuthenticatedUser()
-            //                    .Build();
-            //    options.Filters.Add(new AuthorizeFilter(policy));
+            services.AddMvc(options =>
+            {
+                //To apply[Authorize] attribute globally on all controllers and controller actions throughout our application
+                var policy = new AuthorizationPolicyBuilder()
+                                .RequireAuthenticatedUser()
+                                .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
 
-            //}).AddXmlSerializerFormatters();
+            }).AddXmlSerializerFormatters();
 
             services.AddAuthorization(options =>
             {
@@ -42,24 +43,27 @@ namespace ERPConnect.Web
                     policy => policy.RequireClaim("FirstTimeLogin", "True"));
 
                 options.AddPolicy("AdminRolePolicy",
-                    policy => policy.RequireRole("Admin","True"));
+                    policy => policy.RequireRole("Admin", "True"));
 
                 options.AddPolicy("EditRolePolicy",
                     policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
 
                 options.AddPolicy("DeleteRolePolicy",
-                    policy => policy.RequireClaim("DeleteRole","True"));
+                    policy => policy.RequireClaim("DeleteRole", "True"));
 
             });
 
             services.AddControllersWithViews();
 
+            services.AddSingleton<EmailService>();
+
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IMenuServiceRepository, MenuServiceRepository>();
             services.AddScoped<IMasterEntryRepository, MasterEntryRepository>();
-
             services.AddScoped<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+            services.AddScoped<IOTPVerificationRepository,OTPVerificationRepository>();
+
         }
     }
 }

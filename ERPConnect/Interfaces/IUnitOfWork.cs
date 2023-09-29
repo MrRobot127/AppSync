@@ -3,6 +3,8 @@
     public interface IUnitOfWork
     {
         public IMenuServiceRepository MenuService { get; set; }
-        public IMasterEntryRepository MasterEntry { get; set; }   
+        public IMasterEntryRepository MasterEntry { get; set; }
+        public IOTPVerificationRepository OTPVerification { get; set; }
+
     }
 }

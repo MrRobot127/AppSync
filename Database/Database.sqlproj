@@ -64,5 +64,6 @@
   <ItemGroup>
     <Build Include="dbo\Tables\MenuItems.sql" />
     <Build Include="dbo\Tables\CompanyGroup.sql" />
+    <Build Include="dbo\Tables\OTPVerification.sql" />
   </ItemGroup>
 </Project>

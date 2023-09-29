@@ -37,7 +37,7 @@ namespace ERPConnect.Web.Models.Repository
                 var companyGroup = await _dbContext.CompanyGroups.FirstOrDefaultAsync(c => c.Id == id);
                 return companyGroup;
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }
@@ -100,11 +100,11 @@ namespace ERPConnect.Web.Models.Repository
                     await _dbContext.SaveChangesAsync();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
-        }       
+        }
 
         public async Task<List<Company>> GetCompany()
         {
@@ -172,9 +172,9 @@ namespace ERPConnect.Web.Models.Repository
 
                 return existingCompany;
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -182,10 +182,10 @@ namespace ERPConnect.Web.Models.Repository
         {
             try
             {
-                var addedCompany = _dbContext.Companies.Add(newCompany).Entity;
-                _dbContext.SaveChanges();
+                var entityEntry = await _dbContext.Companies.AddAsync(newCompany);
+                await _dbContext.SaveChangesAsync();
 
-                return addedCompany;
+                return entityEntry.Entity;
             }
             catch
             {
@@ -205,12 +205,12 @@ namespace ERPConnect.Web.Models.Repository
                     await _dbContext.SaveChangesAsync();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
-        }      
+        }
 
-        
+
     }
 }

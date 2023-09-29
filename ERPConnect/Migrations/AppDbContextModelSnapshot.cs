@@ -41,6 +41,9 @@ namespace ERPConnect.Web.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ExternalEmail")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -91,13 +94,13 @@ namespace ERPConnect.Web.Migrations
                         {
                             Id = "6544a9ce-b9a5-42ba-8fdc-9f498c14a745",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d3f994a7-22ad-41cc-b92c-3de313a4578d",
+                            ConcurrencyStamp = "16a609e7-67d2-457e-b457-1c9cea63eb4c",
                             Email = "admin@secureapp.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@SECUREAPP.COM",
                             NormalizedUserName = "ADMIN@SECUREAPP.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEHRNgaUSmdJzkf2nymH6TvI0LBWibly5tYdnIvqGySqRGfD7aKSC0L4U7lG0AlH+JQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDKLVwiO1LocUGOPTPxJSK26R+YcwUu94vPrSeNQzj6aUKjvc5YY0ZMGCTjeA4ywzA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -302,7 +305,7 @@ namespace ERPConnect.Web.Migrations
                         new
                         {
                             Id = "b8feecc3-3e04-4dff-a74f-b14e77ede662",
-                            ConcurrencyStamp = "6075d9f8-277b-4ce8-ac2c-73f1c719a7ef",
+                            ConcurrencyStamp = "7925e7aa-f362-4bdd-a498-a51f94109ddf",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         });

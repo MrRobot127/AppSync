@@ -407,7 +407,7 @@ namespace ERPConnect.Web.Controllers
 
                     return View("ListRoles");
                 }
-                catch (DbUpdateException ex)
+                catch
                 {
 
                     ViewBag.ErrorTitle = $"{role.Name} role is in use";

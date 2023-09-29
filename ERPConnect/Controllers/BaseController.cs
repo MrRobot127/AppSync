@@ -9,7 +9,6 @@ namespace ERPConnect.Web.Controllers
 {
     public  class BaseController : Controller
     {
-
         [HttpGet]
         public IActionResult AccessDenied()
         {

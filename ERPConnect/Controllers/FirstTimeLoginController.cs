@@ -3,16 +3,9 @@ using ERPConnect.Web.Models;
 using ERPConnect.Web.Models.Entity_Tables;
 using ERPConnect.Web.Utility;
 using ERPConnect.Web.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Security.Claims;
-using System.Text;
-using static System.Collections.Specialized.BitVector32;
-using static System.Net.WebRequestMethods;
 
 namespace ERPConnect.Web.Controllers
 {
@@ -72,6 +65,7 @@ namespace ERPConnect.Web.Controllers
             if (!string.IsNullOrEmpty(model.Email))
             {
                 string secretKey = configuration["AppSettings:SecretKey"];
+
                 string fromEmail = configuration["SmtpSettings:SmtpUsername"];
 
                 string otp = OTPGenerator.GenerateOTP(secretKey);
@@ -119,6 +113,7 @@ namespace ERPConnect.Web.Controllers
                 if (isOtpVerified)
                 {
                     var user = await userManager.FindByIdAsync(userId);
+
                     if (user != null)
                     {
                         user.ExternalEmail = model.Email;
@@ -155,7 +150,7 @@ namespace ERPConnect.Web.Controllers
                     {
                         var claims = await userManager.GetClaimsAsync(user);
                         var removeClaimResult = await userManager.RemoveClaimsAsync(user, claims);
-                        
+
                         if (removeClaimResult.Succeeded)
                         {
                             await signInManager.SignOutAsync();
@@ -185,11 +180,12 @@ namespace ERPConnect.Web.Controllers
             }
 
             // Store errors in TempData
-            TempData["Errors"] = errors;
+            if (errors.Count > 0)
+            {
+                TempData["Errors"] = errors;
+            }
 
             return RedirectToAction("Index", "FirstTimeLogin");
         }
-
-
     }
 }

@@ -19,8 +19,6 @@ namespace ERPConnect.Web.Controllers
             this.signInManager = signInManager;
         }
 
-       
-
         // ***************** Register Users
         [Authorize(Roles = "Admin")]
         [HttpGet]
@@ -71,10 +69,6 @@ namespace ERPConnect.Web.Controllers
         {
             if (signInManager.IsSignedIn(User))
             {
-                if (User.HasClaim("FirstTimeLogin", "True"))
-                {
-                    return RedirectToAction("FirstTimePasswordChange", "Account");
-                }
                 return RedirectToAction("Index", "Home");
             }
             return View();
@@ -94,33 +88,17 @@ namespace ERPConnect.Web.Controllers
 
                     if (result.Succeeded)
                     {
-                        var hasFirstTimeLoginClaim = await userManager.GetClaimsAsync(user);
-
-                        if (hasFirstTimeLoginClaim.Any(claim => claim.Type == "FirstTimeLogin" && claim.Value == "True"))
+                        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                         {
-                            return RedirectToAction("FirstTimePasswordChange", "Account");
+                            return Redirect(returnUrl);
                         }
-                        else
-                        {
-                            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                            {
-                                return Redirect(returnUrl);
-                            }
-                            return RedirectToAction("Index", "Home");
-                        }
+                        return RedirectToAction("Index", "Home");
                     }
                 }
 
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
             }
             return View(model);
-        }
-
-        [HttpGet]
-        [Authorize(Policy = "FirstTimePasswordChangePolicy")]
-        public IActionResult FirstTimePasswordChange()
-        {
-            return View();
         }
 
         // ***************** While User Registration Check if Entered User is Already in Use or not
@@ -133,13 +111,11 @@ namespace ERPConnect.Web.Controllers
             {
                 return Json(true);
             }
-
             else
             {
                 return Json($"Email {email} is aleady in use");
             }
         }
-
 
         // ***************** Logout User and redirect to Login Page
         [HttpPost]

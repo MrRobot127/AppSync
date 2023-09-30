@@ -3,13 +3,9 @@ using ERPConnect.Web.Models;
 using ERPConnect.Web.Models.Entity_Tables;
 using ERPConnect.Web.Utility;
 using ERPConnect.Web.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Text;
-using static System.Net.WebRequestMethods;
 
 namespace ERPConnect.Web.Controllers
 {
@@ -34,17 +30,32 @@ namespace ERPConnect.Web.Controllers
             this.configuration = configuration;
             this.unitOfWork = unitOfWork;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var userExternalEmail = User.FindFirst("ExternalEmail")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            ViewBag.UserExternalEmail = userExternalEmail ?? "";
-
-            if (string.IsNullOrEmpty(ViewBag.UserExternalEmail))
+            if (!string.IsNullOrEmpty(userId))
             {
-                ViewBag.TempOtpSentStatus = TempData["TempOtpSentStatus"] as bool? ?? false; 
-                ViewBag.TempExternalEmail = TempData["TempExternalEmail"] ?? "";
+                var user = await userManager.FindByIdAsync(userId);
+
+                if (user != null)
+                {
+                    ViewBag.UserExternalEmail = user.ExternalEmail ?? "";
+
+                    if (string.IsNullOrEmpty(ViewBag.UserExternalEmail))
+                    {
+                        ViewBag.TempOtpSentStatus = TempData["TempOtpSentStatus"] as bool? ?? false;
+                        ViewBag.TempExternalEmail = TempData["TempExternalEmail"] ?? "";
+                    }
+                }
             }
+
+            if (TempData["Errors"] != null)
+            {
+                var errors = TempData["Errors"] as List<string>;
+                ViewBag.Errors = errors ?? new List<string>();
+            }
+
             return View();
         }
 
@@ -54,6 +65,9 @@ namespace ERPConnect.Web.Controllers
             if (!string.IsNullOrEmpty(model.Email))
             {
                 string secretKey = configuration["AppSettings:SecretKey"];
+
+                string fromEmail = configuration["SmtpSettings:SmtpUsername"];
+
                 string otp = OTPGenerator.GenerateOTP(secretKey);
 
                 string toEmail = model.Email;
@@ -68,8 +82,12 @@ namespace ERPConnect.Web.Controllers
                 var otpVerification = new Otpverification
                 {
                     UserId = userId,
+                    FromEmail = fromEmail,
+                    ToEmail = toEmail,
                     Otp = otp,
-                    ExpirationTime = DateTime.Now.AddMinutes(5)
+                    SentOn = DateTime.Now,
+                    ExpirationTime = DateTime.Now.AddMinutes(5),
+                    Type = "FirstTimeLogin"
                 };
 
                 bool status = await unitOfWork.OTPVerification.SaveOTP(otpVerification);
@@ -80,15 +98,94 @@ namespace ERPConnect.Web.Controllers
                     TempData["TempExternalEmail"] = toEmail;
                 }
             }
-            return RedirectToAction("FirstTimeLogin");
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public IActionResult VerifyOTP(FirstTimeLoginViewModel model)
-        {           
+        public async Task<IActionResult> VerifyOTP(FirstTimeLoginViewModel model)
+        {
+            if (!string.IsNullOrEmpty(model.OTP) && !string.IsNullOrEmpty(model.Email))
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = userIdClaim?.Value ?? "";
 
-            return RedirectToAction("FirstTimeLogin");
+                bool isOtpVerified = await unitOfWork.OTPVerification.VerifyOTP(model.OTP, userId);
+                if (isOtpVerified)
+                {
+                    var user = await userManager.FindByIdAsync(userId);
+
+                    if (user != null)
+                    {
+                        user.ExternalEmail = model.Email;
+                        var result = await userManager.UpdateAsync(user);
+
+                        await unitOfWork.OTPVerification.DeleteOTP(model.OTP, userId);
+
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction("Index");
+                        }
+                    }
+                }
+            }
+            return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(FirstTimeLoginViewModel model)
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+
+            // Create a list to store errors
+            var errors = new List<string>();
+
+            if (user != null)
+            {
+                var isOldPasswordValid = await userManager.CheckPasswordAsync(user, model.OldPassword);
+                if (isOldPasswordValid)
+                {
+                    var changePasswordResult = await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+                    if (changePasswordResult.Succeeded)
+                    {
+                        var claims = await userManager.GetClaimsAsync(user);
+                        var removeClaimResult = await userManager.RemoveClaimsAsync(user, claims);
+
+                        if (removeClaimResult.Succeeded)
+                        {
+                            await signInManager.SignOutAsync();
+                            return RedirectToAction("Login", "Account");
+                        }
+                        else
+                        {
+                            errors.Add("Failed to remove the FirstLogin claim.");
+                        }
+                    }
+                    else
+                    {
+                        foreach (var error in changePasswordResult.Errors)
+                        {
+                            errors.Add(error.Description);
+                        }
+                    }
+                }
+                else
+                {
+                    errors.Add("Old Pasword Not Valid.");
+                }
+            }
+            else
+            {
+                errors.Add("User not found.");
+            }
+
+            // Store errors in TempData
+            if (errors.Count > 0)
+            {
+                TempData["Errors"] = errors;
+            }
+
+            return RedirectToAction("Index", "FirstTimeLogin");
+        }
     }
 }

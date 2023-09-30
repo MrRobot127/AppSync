@@ -7,9 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPConnect.Web.Controllers
 {
-    public  class BaseController : Controller
+    public abstract class BaseController : Controller
     {
-
         [HttpGet]
         public IActionResult AccessDenied()
         {

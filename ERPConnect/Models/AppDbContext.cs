@@ -117,9 +117,19 @@ namespace ERPConnect.Web.Models.Context
 
                 entity.Property(e => e.ExpirationTime).HasColumnType("datetime");
 
+                entity.Property(e => e.FromEmail).HasMaxLength(256);
+
                 entity.Property(e => e.Otp)
                     .HasMaxLength(10)
                     .HasColumnName("OTP");
+
+                entity.Property(e => e.SentOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ToEmail).HasMaxLength(256);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(256)
+                    .HasColumnName("TYPE");
 
                 entity.Property(e => e.UserId).HasMaxLength(256);
             });

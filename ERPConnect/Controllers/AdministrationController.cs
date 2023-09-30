@@ -272,7 +272,7 @@ namespace ERPConnect.Web.Controllers
         }
 
         [HttpPost]
-       
+
         public async Task<IActionResult> EditRole(EditRoleViewModel model)
         {
             var role = await roleManager.FindByIdAsync(model.Id);
@@ -391,8 +391,6 @@ namespace ERPConnect.Web.Controllers
             {
                 try
                 {
-                    //throw new Exception("Test Exception");
-
                     var result = await roleManager.DeleteAsync(role);
 
                     if (result.Succeeded)
@@ -499,7 +497,5 @@ namespace ERPConnect.Web.Controllers
 
             return RedirectToAction("EditRole", new { Id = roleId });
         }
-
-
     }
 }

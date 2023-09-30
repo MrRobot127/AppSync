@@ -5,14 +5,11 @@ using ERPConnect.Web.Models.Repository;
 using ERPConnect.Web.Security;
 using ERPConnect.Web.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Text;
 
 namespace ERPConnect.Web
 {
@@ -20,18 +17,54 @@ namespace ERPConnect.Web
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DBConnection")));
+            // Configure DbContext
+            services.AddDbContextPool<AppDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DBConnection") ?? throw new InvalidOperationException("Connection string 'DBConnection' not found."))
+            );
 
+            // Configure Identity
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                options.Password.RequiredLength = 10;
+                // Default Password settings.
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 3;
-                //options.Password.RequireNonAlphanumeric = false;
+
+                // Default Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // Default SignIn settings.
+                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+
+                // Default User settings.
+                options.User.AllowedUserNameCharacters =
+                        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true; 
             })
             .AddEntityFrameworkStores<AppDbContext>();
 
+            //Configure Application Cookie
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.SlidingExpiration = true;
+            });
+
+            // Configure Authorization
             services.AddAuthorization(options =>
             {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
                 options.AddPolicy("FirstTimePasswordChangePolicy",
                     policy => policy.RequireClaim("FirstTimeLogin", "True"));
 
@@ -46,28 +79,18 @@ namespace ERPConnect.Web
 
             });
 
-            services.ConfigureApplicationCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(20));
-
+            // Register Controllers
             services.AddControllersWithViews();
 
-            services.AddMvc(options =>
-            {
-                //To apply[Authorize] attribute globally on all controllers and controller actions throughout our application
-                var policy = new AuthorizationPolicyBuilder()
-                                .RequireAuthenticatedUser()
-                                .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-
-            }).AddXmlSerializerFormatters();
-
+            // Register Services
             services.AddSingleton<EmailService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            services.AddScoped<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
-            services.AddScoped<IOTPVerificationRepository, OTPVerificationRepository>();
             services.AddScoped<IMenuServiceRepository, MenuServiceRepository>();
             services.AddScoped<IMasterEntryRepository, MasterEntryRepository>();
+            services.AddScoped<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+            services.AddScoped<IOTPVerificationRepository, OTPVerificationRepository>();
         }
     }
 }

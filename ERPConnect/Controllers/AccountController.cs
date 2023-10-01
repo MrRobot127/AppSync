@@ -1,5 +1,6 @@
 ﻿using ERPConnect.Web.Models;
 using ERPConnect.Web.ViewModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,13 +11,13 @@ namespace ERPConnect.Web.Controllers
 {
     public class AccountController : BaseController
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // ***************** Register Users
@@ -35,20 +36,21 @@ namespace ERPConnect.Web.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email,
+                    UserName = model.UserName,
+                    PhoneNumber = Convert.ToString(model.PhoneNumber),
                     Email = model.Email
                 };
 
-                var result = await userManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         return RedirectToAction("ListUsers", "Administration");
                     }
 
-                    await signInManager.SignInAsync(user, isPersistent: false);
+                    await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("index", "home");
                 }
 
@@ -65,12 +67,16 @@ namespace ERPConnect.Web.Controllers
         // ***************** Login Users
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
-            if (signInManager.IsSignedIn(User))
+            if (_signInManager.IsSignedIn(User))
             {
                 return RedirectToAction("Index", "Home");
             }
+
+            // Clear the existing external cookie to ensure a clean login process
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
             return View();
         }
 
@@ -78,13 +84,22 @@ namespace ERPConnect.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
         {
-            if (ModelState.IsValid)
+            if (!string.IsNullOrEmpty(model.Password) && (model.Email != null || model.UserName != null))
             {
-                var user = await userManager.FindByEmailAsync(model.Email);
+                ApplicationUser user = null;
+
+                if (model.LoginMethod == "username")
+                {
+                    user = await _userManager.FindByNameAsync(model.UserName);
+                }
+                else if (model.LoginMethod == "email")
+                {
+                    user = await _userManager.FindByEmailAsync(model.Email);
+                }
 
                 if (user != null)
                 {
-                    var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                    var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
 
                     if (result.Succeeded)
                     {
@@ -106,7 +121,8 @@ namespace ERPConnect.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> IsEmailInUse(string email)
         {
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
+
             if (user == null)
             {
                 return Json(true);
@@ -121,7 +137,8 @@ namespace ERPConnect.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> LogOut()
         {
-            await signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
+
             return RedirectToAction("Login", "Account");
         }
     }

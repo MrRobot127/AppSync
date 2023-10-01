@@ -40,9 +40,9 @@ namespace ERPConnect.Web.Controllers
 
                 if (user != null)
                 {
-                    ViewBag.UserExternalEmail = user.ExternalEmail ?? "";
+                    ViewBag.Email = user.Email ?? "";
 
-                    if (string.IsNullOrEmpty(ViewBag.UserExternalEmail))
+                    if (string.IsNullOrEmpty(ViewBag.Email))
                     {
                         ViewBag.TempOtpSentStatus = TempData["TempOtpSentStatus"] as bool? ?? false;
                         ViewBag.TempExternalEmail = TempData["TempExternalEmail"] ?? "";
@@ -52,8 +52,12 @@ namespace ERPConnect.Web.Controllers
 
             if (TempData["Errors"] != null)
             {
-                var errors = TempData["Errors"] as List<string>;
-                ViewBag.Errors = errors ?? new List<string>();
+                var errors = TempData["Errors"] as IEnumerable<string>;
+
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
             }
 
             return View();
@@ -116,7 +120,8 @@ namespace ERPConnect.Web.Controllers
 
                     if (user != null)
                     {
-                        user.ExternalEmail = model.Email;
+                        user.Email = model.Email;
+                        user.EmailConfirmed = true;
                         var result = await userManager.UpdateAsync(user);
 
                         await unitOfWork.OTPVerification.DeleteOTP(model.OTP, userId);
@@ -134,58 +139,64 @@ namespace ERPConnect.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangePassword(FirstTimeLoginViewModel model)
         {
-            var user = await userManager.FindByNameAsync(User.Identity.Name);
-
-            // Create a list to store errors
             var errors = new List<string>();
 
-            if (user != null)
+            if (model.OldPassword == model.NewPassword)
             {
-                var isOldPasswordValid = await userManager.CheckPasswordAsync(user, model.OldPassword);
-                if (isOldPasswordValid)
+                errors.Add("Old and New Password Cannot be same.");
+            }
+            else
+            {
+                var user = await userManager.FindByNameAsync(User.Identity.Name);
+
+                if (user != null)
                 {
-                    var changePasswordResult = await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    var isOldPasswordValid = await userManager.CheckPasswordAsync(user, model.OldPassword);
 
-                    if (changePasswordResult.Succeeded)
+                    if (isOldPasswordValid)
                     {
-                        var claims = await userManager.GetClaimsAsync(user);
-                        var removeClaimResult = await userManager.RemoveClaimsAsync(user, claims);
+                        var changePasswordResult = await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
 
-                        if (removeClaimResult.Succeeded)
+                        if (changePasswordResult.Succeeded)
                         {
-                            await signInManager.SignOutAsync();
-                            return RedirectToAction("Login", "Account");
+                            var claims = await userManager.GetClaimsAsync(user);
+                            var removeClaimResult = await userManager.RemoveClaimsAsync(user, claims);
+
+                            if (removeClaimResult.Succeeded)
+                            {
+                                await signInManager.SignOutAsync();
+                                return RedirectToAction("Login", "Account");
+                            }
+                            else
+                            {
+                                errors.Add("Failed to remove the FirstLogin claim.");
+                            }
                         }
                         else
                         {
-                            errors.Add("Failed to remove the FirstLogin claim.");
+                            foreach (var error in changePasswordResult.Errors)
+                            {
+                                errors.Add(error.Description);
+                            }
                         }
                     }
                     else
                     {
-                        foreach (var error in changePasswordResult.Errors)
-                        {
-                            errors.Add(error.Description);
-                        }
+                        errors.Add("Old Password Not Valid.");
                     }
                 }
                 else
                 {
-                    errors.Add("Old Pasword Not Valid.");
+                    errors.Add("User not found.");
                 }
             }
-            else
-            {
-                errors.Add("User not found.");
-            }
 
-            // Store errors in TempData
             if (errors.Count > 0)
             {
                 TempData["Errors"] = errors;
             }
 
-            return RedirectToAction("Index", "FirstTimeLogin");
+            return RedirectToAction("Index");
         }
     }
 }

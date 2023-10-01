@@ -20,7 +20,7 @@
 }
 
 <h1>
-    @if (string.IsNullOrEmpty(ViewBag.UserExternalEmail))
+    @if (string.IsNullOrEmpty(ViewBag.Email))
     {
         <text>Update Email</text>
     }
@@ -33,7 +33,7 @@
 @if (User?.Identity?.IsAuthenticated == true && User.HasClaim("FirstTimeLogin", "True"))
 {
     <div class="alert alert-info">
-        @if (string.IsNullOrEmpty(ViewBag.UserExternalEmail))
+        @if (string.IsNullOrEmpty(ViewBag.Email))
         {
             <text>Welcome to your first login. Please complete the following steps to register your email:</text>
         }
@@ -44,26 +44,9 @@
 
     </div>
 
-    @if (string.IsNullOrEmpty(ViewBag.UserExternalEmail))
+    @if (string.IsNullOrEmpty(ViewBag.Email))
     {
-        @if (ViewBag.TempOtpSentStatus)
-        {
-            <div class="alert alert-success">
-                OTP sent to <strong>@ViewBag.TempExternalEmail</strong>. Please check your email and enter the OTP below:
-            </div>
-            <form asp-action="VerifyOTP" asp-controller="FirstTimeLogin" method="post">
-                <input asp-for="Email" type="hidden" value="@ViewBag.TempExternalEmail" />
-                <div class="form-group">
-                    <label asp-for="OTP">Enter OTP</label>
-                    <input asp-for="OTP" class="form-control" autocomplete="off" type="number" />
-                    <span asp-validation-for="OTP" class="text-danger"></span>
-                </div>
-                <div style="margin-top:10px;">
-                    <button type="submit" class="btn btn-primary">Submit OTP</button>
-                </div>
-            </form>
-        }
-        else
+        @if (!ViewBag.TempOtpSentStatus)
         {
             <form asp-action="RegisterEmail" asp-controller="FirstTimeLogin" method="post" id="emailForm">
                 <div class="form-group">
@@ -82,10 +65,28 @@
                 </div>
             </form>
         }
+        else
+        {           
+
+            <div class="alert alert-success">
+                OTP sent to <strong>@ViewBag.TempExternalEmail</strong>. Please check your email and enter the OTP below:
+            </div>
+            <form asp-action="VerifyOTP" asp-controller="FirstTimeLogin" method="post">
+                <input asp-for="Email" type="hidden" value="@ViewBag.TempExternalEmail" />
+                <div class="form-group">
+                    <label asp-for="OTP">Enter OTP</label>
+                    <input asp-for="OTP" class="form-control" autocomplete="off" type="number" />
+                    <span asp-validation-for="OTP" class="text-danger"></span>
+                </div>
+                <div style="margin-top:10px;">
+                    <button type="submit" class="btn btn-primary">Submit OTP</button>
+                </div>
+            </form>
+        }
     }
     else
     {
-        <p class="text-muted text-center">Email Verified: <strong>@ViewBag.UserExternalEmail</strong></p>
+        <p class="text-muted text-center">Email Verified: <strong>@ViewBag.Email</strong></p>
 
         <form asp-action="ChangePassword" asp-controller="FirstTimeLogin" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>

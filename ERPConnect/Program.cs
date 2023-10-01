@@ -16,7 +16,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
 }
+else
+{
+    app.UseStatusCodePagesWithReExecute("/Error/{0}");
+}
+
+app.UseMiddleware<ExceptionLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

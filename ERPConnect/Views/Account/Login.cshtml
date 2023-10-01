@@ -15,7 +15,7 @@
                 var usernameInput = $("#usernameInput");
 
                 if (loginMethod === "email") {
-                    $("#emailInputContainer").show();                               
+                    $("#emailInputContainer").show();
                     $("#usernameInputContainer").hide();
                     emailInput.val("");
                 } else {
@@ -36,6 +36,13 @@
 }
 
 <h1>@ViewBag.Title</h1>
+
+@if (ViewBag.RedirectFromFirstTimeLogin != null)
+{
+    <div class="alert alert-info">
+        <text>Password Changed Successfully.Please Login to Continue.</text>
+    </div>
+}
 
 <div class="row">
     <div class="col-md-4">

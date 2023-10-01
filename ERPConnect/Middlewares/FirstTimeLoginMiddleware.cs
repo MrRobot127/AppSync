@@ -4,6 +4,9 @@
     {
         private readonly RequestDelegate _next;
 
+        string[] excludedActions = { "Logout", "HttpStatusCodeHandler" };
+        string[] allowedControllers = { "FirstTimeLogin" };
+
         public FirstTimeLoginMiddleware(RequestDelegate next)
         {
             _next = next;
@@ -15,15 +18,16 @@
             {
                 var actionName = context.GetRouteData().Values["action"]?.ToString();
 
-                if (actionName != null && !string.Equals(actionName, "Logout", StringComparison.OrdinalIgnoreCase))
+                if (actionName != null && !excludedActions.Contains(actionName, StringComparer.OrdinalIgnoreCase))
                 {
                     var controllerName = context.GetRouteData().Values["controller"]?.ToString();
 
-                    if (controllerName != null && string.Equals(controllerName, "FirstTimeLogin", StringComparison.OrdinalIgnoreCase))
+                    if (controllerName != null && allowedControllers.Contains(controllerName, StringComparer.OrdinalIgnoreCase))
                     {
                         await _next(context);
                         return;
                     }
+
                     context.Response.Redirect("/FirstTimeLogin/Index");
                     return;
                 }

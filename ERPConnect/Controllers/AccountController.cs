@@ -69,7 +69,6 @@ namespace ERPConnect.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login()
         {
-            throw new NotImplementedException();
             if (_signInManager.IsSignedIn(User))
             {
                 return RedirectToAction("Index", "Home");

@@ -1,9 +1,10 @@
 ﻿using System.Net.Mail;
 using System.Net;
+using ERPConnect.Web.Interfaces;
 
 namespace ERPConnect.Web.Utility
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
 

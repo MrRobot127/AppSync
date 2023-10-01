@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ERPConnect.Web", "ERPConnect\ERPConnect.Web.csproj", "{4BE7C31A-7D53-418E-BC74-065FBE2114F3}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ERPConnext.Db", "Database\ERPConnext.Db\ERPConnext.Db.sqlproj", "{72AD610F-B6CC-45B5-8E73-E35AA4E6B86F}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ERPConnectDatabase", "ERPConnectDatabase\ERPConnectDatabase.sqlproj", "{8D5B1A9B-9453-485B-B788-F8AE88075BAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +17,12 @@ Global
 		{4BE7C31A-7D53-418E-BC74-065FBE2114F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BE7C31A-7D53-418E-BC74-065FBE2114F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BE7C31A-7D53-418E-BC74-065FBE2114F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72AD610F-B6CC-45B5-8E73-E35AA4E6B86F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72AD610F-B6CC-45B5-8E73-E35AA4E6B86F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72AD610F-B6CC-45B5-8E73-E35AA4E6B86F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{72AD610F-B6CC-45B5-8E73-E35AA4E6B86F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72AD610F-B6CC-45B5-8E73-E35AA4E6B86F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72AD610F-B6CC-45B5-8E73-E35AA4E6B86F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8D5B1A9B-9453-485B-B788-F8AE88075BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D5B1A9B-9453-485B-B788-F8AE88075BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D5B1A9B-9453-485B-B788-F8AE88075BAC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8D5B1A9B-9453-485B-B788-F8AE88075BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D5B1A9B-9453-485B-B788-F8AE88075BAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D5B1A9B-9453-485B-B788-F8AE88075BAC}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,20 +13,17 @@ namespace ERPConnect.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly EmailService emailService;
         private readonly IConfiguration configuration;
         private readonly IUnitOfWork unitOfWork;
 
         public FirstTimeLoginController(UserManager<ApplicationUser> userManager,
                                         SignInManager<ApplicationUser> signInManager,
-                                        EmailService emailService,
                                         IConfiguration configuration,
                                         IUnitOfWork unitOfWork
                                         )
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
-            this.emailService = emailService;
             this.configuration = configuration;
             this.unitOfWork = unitOfWork;
         }
@@ -75,10 +72,17 @@ namespace ERPConnect.Web.Controllers
                 string otp = OTPGenerator.GenerateOTP(secretKey);
 
                 string toEmail = model.Email;
-                string Subject = "OTP Verification";
-                string body = $"Your OTP is: {otp}";
+                string subject = "OTP Verification";
+                string body = $"Dear User,\n\n" +
+                              $"You have requested an OTP for verification. Please find your OTP below:\n\n" +
+                              $"OTP: {otp}\n\n" +
+                              $"Please use this OTP to verify your identity.\n\n" +
+                              $"This OTP is valid for a limited time and should not be shared with anyone. If you did not request this OTP, please disregard this email.\n\n" +
+                              $"Thank you for using our services.\n\n" +
+                              $"Best regards,\n\n" +
+                              $"Our Team";
 
-                await emailService.SendEmailAsync(toEmail, Subject, body);
+                await unitOfWork.EmailService.SendEmailAsync(toEmail, subject, body);
 
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 var userId = userIdClaim?.Value ?? "";

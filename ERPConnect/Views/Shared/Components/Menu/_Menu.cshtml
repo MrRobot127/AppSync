@@ -1,4 +1,5 @@
 ﻿@inject SignInManager<ApplicationUser> signInManager
+
 @model List<MenuItem>
 
 <style>
@@ -43,6 +44,7 @@
                 {
                     @foreach (var menuItem in Model.Where(m => m.ParentMenuItemId == null)) // Top-level menu items
                     {
+
                         @if (User.IsInRole("Admin") || menuItem.Name.ToLower() != "manage")
                         {
                             <li class="nav-item custom-dropdown">

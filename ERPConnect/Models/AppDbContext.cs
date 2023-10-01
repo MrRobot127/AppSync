@@ -146,8 +146,8 @@ namespace ERPConnect.Web.Models.Context
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
             {
                 Id = ROLE_ID,
-                Name = "admin",
-                NormalizedName = "admin".ToUpper()
+                Name = "Admin",
+                NormalizedName = "Admin".ToUpper()
             });
 
             var hasher = new PasswordHasher<ApplicationUser>();
@@ -155,15 +155,14 @@ namespace ERPConnect.Web.Models.Context
             modelBuilder.Entity<ApplicationUser>().HasData(new ApplicationUser
             {
                 Id = ADMIN_ID,
+
                 UserName = "admin@secureapp.com",
                 NormalizedUserName = "admin@secureapp.com".ToUpper(),
-                Email = "admin@secureapp.com",
-                NormalizedEmail = "admin@secureapp.com".ToUpper(),
-                EmailConfirmed = true,
+                Email = null,
+                NormalizedEmail = null,
+                EmailConfirmed = false,
                 PasswordHash = hasher.HashPassword(null, "Admin@123"),
-                ExternalEmail = null,
                 SecurityStamp = string.Empty
-
             });
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>

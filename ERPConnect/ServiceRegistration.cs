@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -47,7 +48,13 @@ namespace ERPConnect.Web
                         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = true; 
             })
-            .AddEntityFrameworkStores<AppDbContext>();
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(1); // Set token expiration time
+            });
 
             //Configure Application Cookie
             services.ConfigureApplicationCookie(options =>
@@ -83,7 +90,7 @@ namespace ERPConnect.Web
             services.AddControllersWithViews();
 
             // Register Services
-            services.AddSingleton<EmailService>();
+            services.AddSingleton<IEmailService,EmailService>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 

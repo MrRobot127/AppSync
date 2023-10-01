@@ -1,11 +1,18 @@
-﻿using ERPConnect.Web.Models;
+﻿using ERPConnect.Web.Interfaces;
+using ERPConnect.Web.Models;
+using ERPConnect.Web.Utility;
 using ERPConnect.Web.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using NuGet.Common;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace ERPConnect.Web.Controllers
 {
@@ -13,11 +20,13 @@ namespace ERPConnect.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _unitOfWork = unitOfWork;
         }
 
         // ***************** Register Users
@@ -145,6 +154,118 @@ namespace ERPConnect.Web.Controllers
             await _signInManager.SignOutAsync();
 
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null && await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    // Generate the reset password token
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                    var tokenEncoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+                    // Build the password reset link                 
+
+                    var callbackUrl = Url.Action("ResetPassword", "Account",
+                        new { email = model.Email, token = tokenEncoded }, Request.Scheme);
+
+
+                    var emailSubject = "Reset Password";
+                    var emailMessage = GeneratePasswordResetEmail(callbackUrl);
+
+                    // Send the email
+                    await _unitOfWork.EmailService.SendEmailAsync(model.Email, emailSubject, emailMessage);
+
+                    // Send the user to Forgot Password Confirmation view
+                    ViewBag.IsNeedToShowForgotPasswordConfirmation = true;
+                    return View(model);
+                }
+
+                // Don't reveal that the user does not exist or is not confirmed
+                ViewBag.IsNeedToShowForgotPasswordConfirmation = true;
+
+                return View(model);
+            }
+
+            return View(model);
+        }
+
+        private string GeneratePasswordResetEmail(string resetLink)
+        {
+            // Read the content of the HTML file
+            var emailTemplatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "PasswordResetEmailTemplate.html");
+            var emailTemplate = System.IO.File.ReadAllText(emailTemplatePath);
+
+            // Replace {reset_link} with the actual reset link
+            emailTemplate = emailTemplate.Replace("{reset_link}", resetLink);
+            return emailTemplate;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            // If password reset token or email is null, most likely the
+            // user tried to tamper the password reset link
+            if (token == null || email == null)
+            {
+                ModelState.AddModelError("", "Invalid password reset token");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Find the user by email
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    // Decode the token from the URL
+                    var tokenBytes = WebEncoders.Base64UrlDecode(model.Token);
+                    var token = Encoding.UTF8.GetString(tokenBytes);
+
+                    // reset the user password
+                    var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+                    if (result.Succeeded)
+                    {
+                        ViewBag.IsNeedToShowPasswordReset = true;
+                        return View(model);
+                    }
+                    // Display validation errors. For example, password reset token already
+                    // used to change the password or password complexity rules not met
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View(model);
+                }
+
+                //Dont reveal that the user does not exist
+                ViewBag.IsNeedToShowPasswordReset = true;
+                return View(model);
+            }
+            // Display validation errors if model state is not valid
+            return View(model);
         }
     }
 }

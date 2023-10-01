@@ -3,16 +3,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>ERPConnext.Db</Name>
+    <Name>ERPConnectDatabase</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{72ad610f-b6cc-45b5-8e73-e35aa4e6b86f}</ProjectGuid>
+    <ProjectGuid>{8d5b1a9b-9453-485b-b788-f8ae88075bac}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>ERPConnext.Db</RootNamespace>
-    <AssemblyName>ERPConnext.Db</AssemblyName>
+    <RootNamespace>ERPConnectDatabase</RootNamespace>
+    <AssemblyName>ERPConnectDatabase</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>

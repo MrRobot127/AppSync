@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ERPConnect.Web.Models
 {
-    public sealed class Logger : ERPConnect.Web.Interfaces.ILogger
+    public sealed class Logger
     {
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly Lazy<Logger> _loggerInstance = new Lazy<Logger>(() => new Logger());

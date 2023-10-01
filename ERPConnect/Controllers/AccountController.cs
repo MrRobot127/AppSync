@@ -77,6 +77,11 @@ namespace ERPConnect.Web.Controllers
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
+            if (TempData["RedirectFromFirstTimeLogin"] != null)
+            {
+                ViewBag.RedirectFromFirstTimeLogin = true;
+            }
+
             return View();
         }
 

@@ -165,6 +165,7 @@ namespace ERPConnect.Web.Controllers
                             if (removeClaimResult.Succeeded)
                             {
                                 await signInManager.SignOutAsync();
+                                TempData["RedirectFromFirstTimeLogin"] = true;
                                 return RedirectToAction("Login", "Account");
                             }
                             else

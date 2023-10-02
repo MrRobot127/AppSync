@@ -5,15 +5,13 @@
     <script>
         $(document).ready(function () {
             $("#sendOtpButton").click(function () {
-                $("#sendOtpButton").prop("disabled", true);
-                $("#loading").show();
-                $("#Email").attr("readonly", true);
-                $("#emailForm").submit();
-            });
-
-            $("#Email").on("input", function () {
                 var isValid = $("#emailForm").valid();
-                $("#sendOtpButton").prop("disabled", !isValid);
+                if (isValid) {
+                    $("#sendOtpButton").prop("disabled", true);
+                    $("#loading").show();
+                    $("#Email").attr("readonly", true);
+                    $("#emailForm").submit();
+                }
             });
         });
     </script>
@@ -55,7 +53,7 @@
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="form-group" style="margin-top:10px;">
-                    <button type="submit" class="btn btn-primary" id="sendOtpButton" disabled>Send OTP</button>
+                    <button type="submit" class="btn btn-primary" id="sendOtpButton">Send OTP</button>
                 </div>
                 <div id="loading" class="text-center" style="display: none;">
                     <div class="spinner-border" role="status">
@@ -66,7 +64,7 @@
             </form>
         }
         else
-        {           
+        {
 
             <div class="alert alert-success">
                 OTP sent to <strong>@ViewBag.TempExternalEmail</strong>. Please check your email and enter the OTP below:

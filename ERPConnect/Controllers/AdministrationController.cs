@@ -182,6 +182,21 @@ namespace ERPConnect.Web.Controllers
             }
             else
             {
+                var userClaims = await userManager.GetClaimsAsync(user);
+
+                // Check if the "FirstTimeLogin" claim with value "true" exists
+                var firstTimeLoginClaim = userClaims.FirstOrDefault(c => c.Type == "FirstTimeLogin" && c.Value == "True");
+
+                if (firstTimeLoginClaim != null)
+                {
+                    var removeClaimResult = await userManager.RemoveClaimAsync(user, new Claim("FirstTimeLogin", "true"));
+                    if (!removeClaimResult.Succeeded)
+                    {
+                        // Handle the error if the claim removal fails
+                        ModelState.AddModelError("", "Error removing FirstTimeLogin claim.");
+                        return View("ListUsers");
+                    }
+                }
                 var result = await userManager.DeleteAsync(user);
 
                 if (result.Succeeded)

@@ -47,13 +47,15 @@ namespace ERPConnect.Web.Controllers
                 {
                     UserName = model.UserName,
                     PhoneNumber = Convert.ToString(model.PhoneNumber),
-                    Email = model.Email
+                    Email = null
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddClaimAsync(user, new Claim("FirstTimeLogin", "true"));
+
                     if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         return RedirectToAction("ListUsers", "Administration");
@@ -144,6 +146,22 @@ namespace ERPConnect.Web.Controllers
             else
             {
                 return Json($"Email {email} is aleady in use");
+            }
+        }
+
+        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> IsUserNameAlreadyExist(string UserName)
+        {
+            var user = await _userManager.FindByNameAsync(UserName);
+
+            if (user == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"UserName {UserName} is aleady in use");
             }
         }
 

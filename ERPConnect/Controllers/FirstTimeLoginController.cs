@@ -203,5 +203,21 @@ namespace ERPConnect.Web.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> IsEmailInUse(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Email {email} is aleady in use");
+            }
+        }
     }
 }

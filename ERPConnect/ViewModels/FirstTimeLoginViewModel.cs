@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace ERPConnect.Web.ViewModels
 {
@@ -6,7 +7,7 @@ namespace ERPConnect.Web.ViewModels
     {
         [Required]
         [EmailAddress]
-        //[Remote(action: "IsEmailInUse", controller: "Account")]
+        [Remote(action: "IsEmailInUse", controller: "FirstTimeLogin")]
         public string? Email { get; set; }
 
         [Required]

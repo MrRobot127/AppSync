@@ -46,14 +46,14 @@ namespace ERPConnect.Web
                 // Default User settings.
                 options.User.AllowedUserNameCharacters =
                         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = true; 
+                options.User.RequireUniqueEmail = false; 
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
             services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
-                options.TokenLifespan = TimeSpan.FromHours(1); // Set token expiration time
+                options.TokenLifespan = TimeSpan.FromMinutes(30); // Set token expiration time
             });
 
             //Configure Application Cookie

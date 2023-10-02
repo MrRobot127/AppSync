@@ -54,7 +54,7 @@ namespace ERPConnect.Web.Controllers
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddClaimAsync(user, new Claim("FirstTimeLogin", "true"));
+                    await _userManager.AddClaimAsync(user, new Claim("FirstTimeLogin", "True"));
 
                     if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {

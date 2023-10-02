@@ -1,4 +1,6 @@
 ﻿using ERPConnect.Web.Models.Entity_Tables;
+using ERPConnect.Web.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ERPConnect.Web.Interfaces
 {
@@ -20,7 +22,7 @@ namespace ERPConnect.Web.Interfaces
 
         Task<Company> UpdateCompany(Company updatedCompanyDetails);
 
-        Task<Company> AddCompany(Company newcompany); 
+        Task<Company> AddCompany(AddCompanyViewModel newcompany); 
 
         Task DeleteCompany(int companyId);
 

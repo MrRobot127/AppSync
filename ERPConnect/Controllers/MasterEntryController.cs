@@ -4,6 +4,7 @@ using ERPConnect.Web.Models.Repository;
 using Microsoft.AspNetCore.Mvc;
 using ERPConnect.Web.Models;
 using Newtonsoft.Json;
+using ERPConnect.Web.ViewModels;
 
 namespace ERPConnect.Web.Controllers
 {
@@ -19,9 +20,9 @@ namespace ERPConnect.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> CompanyGroup()
         {
-            var companyGroup = await _unitOfWork.MasterEntry.GetCompanyGroup();
+            var companyGroups = await _unitOfWork.MasterEntry.GetCompanyGroup();
 
-            return View(companyGroup);
+            return View(companyGroups);
         }
 
         [HttpGet("GetCompanyById/{id}")]
@@ -94,7 +95,7 @@ namespace ERPConnect.Web.Controllers
             var company = await _unitOfWork.MasterEntry.GetCompany();
 
             return View(company);
-        }               
+        }
 
         [HttpPost]
         public async Task<IActionResult> UpdateCompanyDetails([FromBody] Company updatedCompanyDetails)
@@ -119,22 +120,36 @@ namespace ERPConnect.Web.Controllers
                                       .Select(e => e.ErrorMessage)
                                       .ToList();
             return Json(new { success = false, errors });
-        }        
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddCompany()
+        {
+            return View();
+        }
 
         [HttpPost]
-        public async Task<IActionResult> AddCompany(Company newCompany)
+        public async Task<IActionResult> AddCompany(AddCompanyViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var company = await _unitOfWork.MasterEntry.AddCompany(newCompany);
-                return Json(new { success = true, data = JsonConvert.SerializeObject(company) });
+                var company = await _unitOfWork.MasterEntry.AddCompany(model);
+
+                if (company != null)
+                {
+                    ViewBag.IsCompanyAddedSuccessfull = true;
+                    return View(model);
+                }
 
             }
-            var errors = ModelState.SelectMany(x => x.Value.Errors.Select(e => e.ErrorMessage));
-            return Json(new { success = false, errors });
-
+            return View(model);
         }
-       
+
+        [HttpGet("EditCompany/{companyId}")]
+        public async Task<IActionResult> EditCompany(int companyId)
+        {
+            return View();
+        }
 
         [HttpDelete("DeleteCompany/{id}")]
         public async Task<IActionResult> DeleteCompany(int id)

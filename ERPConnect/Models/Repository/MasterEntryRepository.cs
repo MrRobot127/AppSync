@@ -178,11 +178,37 @@ namespace ERPConnect.Web.Models.Repository
             }
         }
 
-        public async Task<Company> AddCompany(Company newCompany)
+        public async Task<Company> AddCompany(AddCompanyViewModel newCompany)
         {
             try
             {
-                var entityEntry = await _dbContext.Companies.AddAsync(newCompany);
+
+                var entityEntry = await _dbContext.Companies.AddAsync(new Company
+                {
+                    CompanyGroupId = newCompany.CompanyGroupId,
+                    Name = newCompany.CompanyName,
+                    Address1 = newCompany.Address1,
+                    Address2 = newCompany.Address2,
+                    KeyPerson = newCompany.KeyPerson,
+                    InvolvingIndustry = newCompany.InvolvingIndustry,
+                    PhoneNo = newCompany.PhoneNo,
+                    FaxNo = newCompany.FaxNo,
+                    Email = newCompany.Email,
+                    Pfno = newCompany.Pfno,
+                    Esino = newCompany.Esino,
+                    HeadOffice = newCompany.HeadOffice,
+                    PanNo = newCompany.PanNo,
+                    RegNo = newCompany.RegNo,
+                    KeyPersonAddress = newCompany.KeyPersonAddress,
+                    KeyPersonPhNo = newCompany.KeyPersonPhNo,
+                    KeyPersonDob = newCompany.KeyPersonDob,
+                    KeyDesignation = newCompany.KeyDesignation,
+                    RegistrationDate = newCompany.RegistrationDate,
+                    CreatedBy = 1,
+                    CreatedOn = DateTime.Now
+
+                });
+
                 await _dbContext.SaveChangesAsync();
 
                 return entityEntry.Entity;

@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[Company](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[CompanyGroupId] [int] NOT NULL,
 	[Name] [nvarchar](255) NOT NULL,
 	[Address1] [nvarchar](255) NULL,
 	[Address2] [nvarchar](255) NULL,
@@ -22,8 +23,13 @@
 	[CreatedOn] [datetime] NULL,
 	[UpdatedBy] [int] NULL,
 	[UpdatedOn] [datetime] NULL,
- CONSTRAINT [PK_Company] PRIMARY KEY CLUSTERED 
+PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Company]  WITH CHECK ADD FOREIGN KEY([CompanyGroupId])
+REFERENCES [dbo].[CompanyGroup] ([Id])
+GO

@@ -31,13 +31,8 @@
 <script>
 
     $(document).ready(function () {
-        const $companyGroupTable = $('#company-table');
 
-        const fieldNames = [
-            "Id", "Name", "Address1", "Address2", "KeyPerson", "InvolvingIndustry", "PhoneNo", "FaxNo",
-            "Email", "PFNo", "ESINo", "HeadOffice", "PanNo", "RegNo", "KeyPersonAddress", "KeyPersonPhNo",
-            "KeyPersonDOB", "KeyDesignation", "RegistrationDate"
-        ];
+        const $companyGroupTable = $('#company-table');
 
         $companyGroupTable.DataTable({
             "paging": true,
@@ -49,136 +44,21 @@
             ]
         });
 
-        generateDynamicForm(4, 10);
+        $("#addCompanyButton").click(function () {
 
-        $(".edit-button,.view-button").click(function () {
-            var companyId = $(this).data("id");
+            $("#addCompanyIframe").attr("src", "/MasterEntry/AddCompany");
 
-            var isViewButton = $(this).hasClass("view-button");
-
-            var url = '/GetCompanyById/' + companyId;
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success) {
-
-                        var companyData = response.data;
-
-                        for (var key in companyData) {
-                            if (companyData.hasOwnProperty(key)) {
-                                var value = companyData[key];
-                                var inputId = null;
-
-                                for (var i = 0; i < fieldNames.length; i++) {
-                                    var fieldName = fieldNames[i];
-                                    if (fieldName.toLowerCase() === key.toLowerCase()) {
-                                        inputId = "Company" + fieldName;
-                                        break;
-                                    }
-                                }
-                                if (inputId) {
-                                    $("#" + inputId).val(value);
-                                }
-                            }
-                        }
-
-                        $("#companyModal").modal("show");
-
-                        $('.datepicker').datepicker({
-                            dateFormat: 'yy-mm-dd'
-                        });
-
-                    } else {
-                        alert('Operation failed: ' + response.msg);
-                    }
-                },
-                error: function (error) {
-                    alert('An error occurred during request.');
-                }
-            });
-
-            if (isViewButton) {
-                $("#companyModal").attr("data-mode", "View");
-
-                $("#companyModalLabel").text("Company Details");
-                $("#companyModal input").prop("readonly", isViewButton);
-                $("#saveEditButton").toggle(!isViewButton);
-            }
-            else {
-                $("#companyModal").attr("data-mode", "Edit");
-
-                $("#companyModalLabel").text("Edit Company Details");
-                $("#companyModal input").prop("readonly", false);
-                $("#saveEditButton").toggle(true);
-            }
+            $("#companyModal").modal("show");
         });
 
-        $("#closeEditModal").on("click", function () {
-            $("#companyModal").modal("hide");
-        });
-
-        $("#saveEditButton").click(function () {
+        $(".edit-button").click(function () {
             debugger;
-            var dataMode = $("#companyModal").attr("data-mode");
-            if (dataMode === "Edit") {
-                var dataToSend = {};
+            var companyId = $(this).data("id");
+            var url = "/MasterEntry/EditCompany/" + encodeURIComponent(companyId);
 
-                for (var i = 0; i < fieldNames.length; i++) {
-                    var fieldName = fieldNames[i];
-                    var inputId = "Company" + fieldName;
-                    var inputValue = $("#" + inputId).val()
+            $("#addCompanyIframe").attr("src", url);
 
-                    dataToSend[fieldName] = inputValue;
-                }
-
-                $.ajax({
-                    url: '/MasterEntry/UpdateCompanyDetails',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(dataToSend),
-                    success: function (response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert('Operation failed: ' + response.msg);
-                        }
-                    },
-                    error: function (error) {
-                        alert('An error occurred during the request.');
-                    }
-                });
-            }
-
-            else if (dataMode === "Add") {
-                var newData = {};
-
-                for (var i = 0; i < fieldNames.length; i++) {
-                    var fieldName = fieldNames[i];
-                    var inputId = "Company" + fieldName;
-                    var inputValue = $("#" + inputId).val();
-
-                    newData[fieldName] = inputValue;
-                }
-
-                $.ajax({
-                    url: '/MasterEntry/AddCompany',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(newData),
-                    success: function (response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert('Operation failed: ' + response.msg);
-                        }
-                    },
-                    error: function (error) {
-                        alert('An error occurred during the request.');
-                    }
-                });
-            }
+            $("#companyModal").modal("show");
         });
 
         $(".delete-button").click(function () {
@@ -204,51 +84,18 @@
             }
         });
 
-        $("#addCompanyButton").click(function () {
-
-            $("#companyModalLabel").text("Add New Company");
-            $("#companyModal input[type='text']").val("");
-            $("#companyModal").modal("show");
-            $("#companyModal").attr("data-mode", "add");
-
-        });
     });
 
-    function generateDynamicForm(columns, rows) {
-        const fieldNames = [
-            "Id", "Name", "Address1", "Address2", "KeyPerson", "InvolvingIndustry", "PhoneNo", "FaxNo",
-            "Email", "PFNo", "ESINo", "HeadOffice", "PanNo", "RegNo", "KeyPersonAddress", "KeyPersonPhNo",
-            "KeyPersonDOB", "KeyDesignation", "RegistrationDate"
-        ];
-
-        let dynamicFormFields = '';
-
-        for (let row = 0; row < rows; row++) {
-            dynamicFormFields += '<div class="row mb-3">';
-            for (let col = 0; col < columns; col++) {
-                const fieldName = fieldNames[row * columns + col];
-                if (!fieldName) break;
-
-                const datepicker = fieldName === 'RegistrationDate' || fieldName === 'KeyPersonDOB' ? 'datepicker' : '';
-
-                dynamicFormFields += `
-                                                        <div class="col-md-${12 / columns}">
-                                                            <div class="form-group">
-                                                                <label for="Company${fieldName}" class="bold-label">${fieldName}</label>
-                                                                        <input type="text" id="Company${fieldName}" class="form-control ${datepicker}" style="cursor:auto;">
-                                                            </div>
-                                                        </div>
-                                                    `;
-            }
-            dynamicFormFields += '</div>';
-        }
-
-        $('#dynamicFormFields').html(dynamicFormFields);
+    function closeFancybox() {
+        $("#companyModal").modal("hide");
+        window.location.reload();
     }
 
+    function closeFancyboxW() {
+        $("#companyModal").modal("hide");
+    }
 
 </script>
-
 
 <div class="container">
     <div class="row" style="margin: 10px; padding: 10px;">
@@ -258,7 +105,7 @@
                     Company Details
                 </div>
                 <div class="card-body">
-                    <button onclick="addNewCompany()" id="addCompanyButton" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">
+                    <button id="addCompanyButton" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">
                         Add New Company
                     </button>
                     <table id="company-table" class="custom-table">
@@ -272,7 +119,6 @@
                                 <th>E.S.I. No.</th>
                                 <th>Registration Date</th>
                                 <th>Action</th>
-
                             </tr>
                         </thead>
                         <tbody>
@@ -305,29 +151,14 @@
             </div>
         </div>
     </div>
+</div>
 
-    <div class="modal fade" id="companyModal" tabindex="-1" role="dialog" aria-labelledby="companyModalLabel" aria-hidden="true" data-mode="">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="companyModalLabel"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeEditModal">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    <!-- Dynamic form fields will be inserted here -->
-                    <div id="dynamicFormFields" class="row"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="saveEditButton">Save</button>
-                </div>
+<div class="modal fade" id="companyModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <iframe id="addCompanyIframe" src="" style="width: 100%; min-height: 600px; border: 0;"></iframe>
             </div>
         </div>
     </div>
-
-
-
-
 </div>

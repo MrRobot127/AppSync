@@ -1,0 +1,249 @@
+﻿@using AppSync.Web.Models.Context;
+@using Microsoft.EntityFrameworkCore;
+
+@inject AppDbContext _context;
+
+@model AddCompanyViewModel
+
+@{
+    Layout = "_IframeLayout";
+    ViewBag.Title = "Add Company";
+}
+
+<script>
+    $(document).ready(function () {
+        $("#addCompanyForm input").prop("readonly", true);
+
+        $('.datepicker').keypress(function () {
+            return false;
+        });
+
+        $("#companyGroupDropdown").change(function () {
+            const selectedGroupId = $(this).val();
+
+            const isValidSelection = selectedGroupId !== '-1';
+
+            $("#addCompanyForm input").prop("readonly", !isValidSelection);
+
+            if (isValidSelection) {
+                $('.datepicker').datepicker({
+                    dateFormat: 'yy-mm-dd'
+                });
+            }
+
+        });
+
+    });
+
+    function closeFancybox() {
+        window.parent.closeFancybox();
+    }
+
+    function closeFancyboxW() {
+        window.parent.closeFancyboxW();
+    }
+
+</script>
+
+@if (ViewBag.IsCompanyAddedSuccessfull != null)
+{
+    <div class="alert alert-info">
+        <text>
+            Company Added Successfully. You can close this page now.
+            <button onclick="closeFancybox()">Close</button>
+        </text>
+    </div>
+}
+else
+{
+
+    <form method="post" action="@Url.Action("AddCompany", "MasterEntry")" class="needs-validation" novalidate="true" id="addCompanyForm">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div style="display:inline-block;">
+            <h2>@ViewBag.Title</h2>
+        </div>
+
+        <div style="display:inline-block;margin-left:10px;">
+            <select asp-for="CompanyGroupId" class="form-control" id="companyGroupDropdown">
+                <option value="-1" disabled selected>Select Company Group</option>
+
+                @foreach (var group in await _context.CompanyGroups.ToListAsync())
+                {
+                    <option value="@group.Id">@group.GroupName</option>
+                }
+
+            </select>
+        </div>
+        <div class="modal-header" style="display:inline-block;float:right;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeFancyboxW()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <table class="table table-bordered">
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label asp-for="CompanyName" class="control-label">Company Name</label>
+                        <input asp-for="CompanyName" class="form-control" required="required" />
+                        <span asp-validation-for="CompanyName" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="Address1" class="control-label">Address 1</label>
+                        <input asp-for="Address1" class="form-control" />
+                        <span asp-validation-for="Address1" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="Address2" class="control-label">Address 2</label>
+                        <input asp-for="Address2" class="form-control" />
+                        <span asp-validation-for="Address2" class="text-danger"></span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label asp-for="KeyPerson" class="control-label">Key Person</label>
+                        <input asp-for="KeyPerson" class="form-control" />
+                        <span asp-validation-for="KeyPerson" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="InvolvingIndustry" class="control-label">Involving Industry</label>
+                        <input asp-for="InvolvingIndustry" class="form-control" required="required" />
+                        <span asp-validation-for="InvolvingIndustry" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="PhoneNo" class="control-label">Phone No</label>
+                        <input asp-for="PhoneNo" class="form-control" />
+                        <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label asp-for="FaxNo" class="control-label">Fax No</label>
+                        <input asp-for="FaxNo" class="form-control" />
+                        <span asp-validation-for="FaxNo" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label">Email</label>
+                        <input asp-for="Email" class="form-control" type="email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="Pfno" class="control-label">P.F. No</label>
+                        <input asp-for="Pfno" class="form-control" />
+                        <span asp-validation-for="Pfno" class="text-danger"></span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label asp-for="Esino" class="control-label">E.S.I. No</label>
+                        <input asp-for="Esino" class="form-control" />
+                        <span asp-validation-for="Esino" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="HeadOffice" class="control-label">Head Office</label>
+                        <input asp-for="HeadOffice" class="form-control" required="required" />
+                        <span asp-validation-for="HeadOffice" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="PanNo" class="control-label">Pan No</label>
+                        <input asp-for="PanNo" class="form-control" />
+                        <span asp-validation-for="PanNo" class="text-danger"></span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label asp-for="RegNo" class="control-label">Registration No</label>
+                        <input asp-for="RegNo" class="form-control" required="required" />
+                        <span asp-validation-for="RegNo" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="KeyPersonAddress" class="control-label">Key Person Address</label>
+                        <input asp-for="KeyPersonAddress" class="form-control" />
+                        <span asp-validation-for="KeyPersonAddress" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="KeyPersonPhNo" class="control-label">Key Person Phone No</label>
+                        <input asp-for="KeyPersonPhNo" class="form-control" />
+                        <span asp-validation-for="KeyPersonPhNo" class="text-danger"></span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label asp-for="KeyPersonDob" class="control-label">Key Person Date of Birth</label>
+                        <input asp-for="KeyPersonDob" class="form-control datepicker" />
+                        <span asp-validation-for="KeyPersonDob" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="KeyDesignation" class="control-label">Key Designation</label>
+                        <input asp-for="KeyDesignation" class="form-control" />
+                        <span asp-validation-for="KeyDesignation" class="text-danger"></span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="form-group">
+                        <label asp-for="RegistrationDate" class="control-label">Registration Date</label>
+                        <input asp-for="RegistrationDate" class="form-control datepicker" required="required" />
+                        <span asp-validation-for="RegistrationDate" class="text-danger"></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+}
+
+
